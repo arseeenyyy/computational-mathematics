@@ -8,7 +8,7 @@ using namespace std;
 
 class MatrixReader {
 public: 
-    static vector<vector<double>> readFromFile(const string &filename);
+    static vector<vector<double>> readFromFile(const string &filename, int &n);
     static vector<vector<double>> readFromKeyboard(int &n);
 };
 
