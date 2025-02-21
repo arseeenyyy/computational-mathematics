@@ -10,6 +10,8 @@ class Utils {
 public:
     static bool checkDiagonalDominance(vector<vector<double>> &matrix, int n); 
     static bool makeMatrixDiagonalDominant(vector<vector<double>> &matrix, int n);
+    static double matrixNorm(const vector<vector<double>> &matrix, int n);
+    static void printMatrix(const vector<vector<double>> &matrix, int n);
 };
 
 #endif

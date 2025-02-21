@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "io/MatrixReader.h"
+#include "util/Utils.h"
 
 using namespace std;
 
@@ -9,8 +10,8 @@ int main() {
     vector<vector<double>> matrix;
     int n;
     double accuracy;
+    cout << "format of enter params:\nn (int size; 0 <= n <= 20)\naccuracy (double)\nmatrix params:\na_11 a_12 ... b_1n\na_21 a_22 ... b_2n\na_n1 a_n2 ... b_nn\n"; 
     while (true) {
-        cout << "format of enter params:\nn (int size; 0 <= n <= 20)\naccuracy (double)\nmatrix params:\na_11 a_12 ... b_1n\na_21 a_22 ... b_2n\na_n1 a_n2 ... b_nn\n"; 
         cout << "How will you enter matrix dimension? (1 - from the keyboard, 2 - from the file): ";
         int choice;
         cin >> choice; 
@@ -26,12 +27,21 @@ int main() {
         }
         cout << "\n";
     }
-    cout << "your matrix:\n"; 
-    for (const auto& row: matrix) {
-        for (double val: row) {
-            cout << val << " ";
+    // Utils :: printMatrix(matrix, n);
+    if (Utils :: checkDiagonalDominance(matrix, n)) {
+        cout << "Matrix is diagonally dominant\n";
+    } else {
+        cout << "Matrix is not diagonally dominant. Trying to reorder...\n";
+        if (! Utils :: makeMatrixDiagonalDominant(matrix, n)) {
+            cout << "Impossible to make matrix diagonally dominant\n";
+            return 1;
         }
-        cout << "\n";
+        cout << "Matrix was reordered successfully\n";
     }
+
+    Utils :: printMatrix(matrix, n);
+    double norm = Utils :: matrixNorm(matrix, n);
+    cout << "Matrix norm: " << norm << "\n";
+
     return 0;
 }

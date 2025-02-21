@@ -1,7 +1,7 @@
 #include "Utils.h"
-#include <iostream>
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -32,4 +32,25 @@ bool Utils :: makeMatrixDiagonalDominant(vector<vector<double>> &matrix, int n) 
         }
     }
     return checkDiagonalDominance(matrix, n); 
+}
+double Utils :: matrixNorm(const vector<vector<double>> &matrix, int n) {
+    double maxSum = 0;
+    for (int i = 0; i < n; i ++) {
+        double rowSum = 0; 
+        for (int j = 0; j < n; j ++) {
+            rowSum += abs(matrix[i][j]);
+        }
+        maxSum = max(rowSum, maxSum);
+    }
+    return maxSum;
+}
+
+void Utils :: printMatrix(const vector<vector<double>> &matrix, int n) {
+    cout << "Your matrix:\n"; 
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << "| " << matrix[i][n] << "\n"; 
+    }
 }
