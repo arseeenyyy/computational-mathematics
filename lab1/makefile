@@ -8,7 +8,7 @@ UTIL_DIR = util
 OBJ_DIR = obj
 BIN_DIR = bin
 
-SRC = $(SRC_DIR)/main.cpp $(SRC_DIR)/$(UTIL_DIR)/Utils.cpp $(SRC_DIR)/$(IO_DIR)/MatrixReader.cpp
+SRC = $(SRC_DIR)/main.cpp $(SRC_DIR)/$(UTIL_DIR)/Utils.cpp $(SRC_DIR)/$(IO_DIR)/MatrixReader.cpp $(SRC_DIR)/$(CORE_DIR)/GaussSeidel.cpp
 OBJ = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
 TARGET = $(BIN_DIR)/main
 

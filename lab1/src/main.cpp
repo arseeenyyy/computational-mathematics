@@ -3,6 +3,8 @@
 #include <vector>
 #include "io/MatrixReader.h"
 #include "util/Utils.h"
+#include "core/GaussSeidel.h"
+
 
 using namespace std;
 
@@ -39,9 +41,10 @@ int main() {
         cout << "Matrix was reordered successfully\n";
     }
 
-    Utils :: printMatrix(matrix, n);
+    // Utils :: printMatrix(matrix, n);
     double norm = Utils :: matrixNorm(matrix, n);
     cout << "Matrix norm: " << norm << "\n";
-
+    vector<double> x(n, 0); 
+    GaussSeidel :: gaussSeidelMethod(matrix, x, accuracy);
     return 0;
 }
