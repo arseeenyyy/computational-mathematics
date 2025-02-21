@@ -8,8 +8,8 @@ using namespace std;
 
 class MatrixReader {
 public: 
-    static vector<vector<double>> readFromFile(const string &filename, int &n);
-    static vector<vector<double>> readFromKeyboard(int &n);
+    static vector<vector<double>> readFromFile(const string &filename, int &n, double  &accuracy);
+    static vector<vector<double>> readFromKeyboard(int &n, double &accuracy);
 };
 
 #endif
