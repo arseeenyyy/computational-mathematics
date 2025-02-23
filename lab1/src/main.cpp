@@ -29,7 +29,7 @@ int main() {
         }
         cout << "\n";
     }
-    // Utils :: printMatrix(matrix, n);
+    
     if (Utils :: checkDiagonalDominance(matrix, n)) {
         cout << "Matrix is diagonally dominant\n";
     } else {

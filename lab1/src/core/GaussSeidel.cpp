@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <iomanip>  // Для форматированного вывода
+#include <iomanip> 
 
 using namespace std;
 
@@ -19,15 +19,12 @@ void GaussSeidel::gaussSeidelMethod(vector<vector<double>> &matrix, vector<doubl
         cout << setw(10) << "x" + to_string(i + 1);  
     }
     for (int i = 0; i < n; i++) {
-        cout << setw(1) << "ε" + to_string(i + 1);  
+        cout << setw(10) << "ε" + to_string(i + 1);  
     }
-    cout << endl;
-
-    
+    cout << endl;  
+    vector<double> new_x = x;  
+    vector<double> epsilon(n, 0);  
     while (true) {
-        vector<double> new_x = x;  
-        vector<double> epsilon(n, 0);
-
         for (int i = 0; i < n; i++) {
             double sum = 0;
             for (int j = 0; j < n; j++) {
@@ -48,10 +45,20 @@ void GaussSeidel::gaussSeidelMethod(vector<vector<double>> &matrix, vector<doubl
 
         double max_error = *max_element(epsilon.begin(), epsilon.end());
         if (max_error <= accuracy) {
+            x = new_x;
             break;  
         }
         x = new_x;
         iteration++;
     }
     cout << "\nMethod converged in " << iteration + 1 << " iterations.\n";
+    cout << "Solution vector:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "[x" << i + 1 << "] = " << fixed << setprecision(4) << x[i] << endl;
+    }
+
+    cout << "\nε vector:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "[ε" << i + 1 << "] = " << fixed << setprecision(4) << epsilon[i] << endl;
+    }
 }
