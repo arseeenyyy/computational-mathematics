@@ -5,34 +5,39 @@
 
 using namespace std;
 
-
-bool Utils :: checkDiagonalDominance(vector<vector<double>> &matrix, int n) {
-    for (int i = 0; i < n; i ++) {
-        double diag = abs(matrix[i][i]);
-        double sum = 0; 
-        for (int j = 0; j < n; j ++) {
-            if (i != j) sum += abs(matrix[i][j]);
+bool Utils::checkDiagonalDominance(vector<vector<double>> &matrix, int n) {
+    for (int i = 0; i < n; i++) {
+        double diag = std::abs(matrix[i][i]);
+        double sum = 0;
+        for (int j = 0; j < n; j++) {
+            if (i != j) sum += std::abs(matrix[i][j]);
         }
         if (diag < sum) return false;
     }
     return true;
 }
-bool Utils :: makeMatrixDiagonalDominant(vector<vector<double>> &matrix, int n) {
-    for (int i = 0; i < n; i++) {
-        int bestRow = i;
-        double maxDiag = abs(matrix[i][i]);
-        for (int k = i + 1; k < n; k++) {
-            if (abs(matrix[k][i]) > maxDiag) {
-                maxDiag = abs(matrix[k][i]);
-                bestRow = k;
-            }
+
+void Utils::permuteRows(vector<vector<double>> &matrix, int l, int r, bool &found) {
+    if (l == r) {
+        if (checkDiagonalDominance(matrix, r + 1)) {
+            found = true;
         }
-        if (bestRow != i) {
-            swap(matrix[i], matrix[bestRow]);
-        }
+        return;
     }
-    return checkDiagonalDominance(matrix, n); 
+    for (int i = l; i <= r; i++) {
+        swap(matrix[l], matrix[i]);
+        permuteRows(matrix, l + 1, r, found);
+        if (found) return;
+        swap(matrix[l], matrix[i]);
+    }
 }
+
+bool Utils::makeMatrixDiagonalDominant(std::vector<std::vector<double>> &matrix, int n) {
+    bool found = false;
+    permuteRows(matrix, 0, n - 1, found);
+    return found;
+}
+
 double Utils :: matrixNorm(const vector<vector<double>> &matrix, int n) {
     double maxSum = 0;
     for (int i = 0; i < n; i ++) {

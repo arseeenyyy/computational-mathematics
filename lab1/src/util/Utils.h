@@ -12,6 +12,8 @@ public:
     static bool makeMatrixDiagonalDominant(vector<vector<double>> &matrix, int n);
     static double matrixNorm(const vector<vector<double>> &matrix, int n);
     static void printMatrix(const vector<vector<double>> &matrix, int n);
+    static void permuteRows(vector<vector<double>> &matrix, int l, int r, bool &found);
+
 };
 
 #endif
