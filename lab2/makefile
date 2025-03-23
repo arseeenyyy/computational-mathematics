@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Iinclude
-SRC = src/main.cpp src/Equation.cpp src/Solver.cpp src/Method.cpp
+SRC = src/main.cpp 
 OBJ = $(SRC:.cpp=.o)
 EXEC = nonlinear_solver
 
