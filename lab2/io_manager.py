@@ -1,5 +1,6 @@
 from equations import EQUATIONS
 from methods import METHODS
+from equations import SYSTEM_EQUATIONS
 from result import Result
 class IOManager: 
 
@@ -24,10 +25,12 @@ class IOManager:
         choice = self._get_choice(0, len(METHODS) - 1) 
         return METHODS[choice]
 
-    
-
-
-
+    def select_system(self): 
+        print('Available systems of nonlinear equations')
+        for i, sys_eq in enumerate(SYSTEM_EQUATIONS): 
+            print(f'{i}. {sys_eq['description']}')
+        choice = self._get_choice(0, len(SYSTEM_EQUATIONS) - 1) 
+        return SYSTEM_EQUATIONS[choice]
 
     def get_interval(self): 
         print("Set interval [a; b]:")

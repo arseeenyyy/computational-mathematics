@@ -13,6 +13,13 @@ def main():
             plotter.plot_equation(equation['func'], equation['description'])
             method = io.select_method()
             print(method)
+        if (choice == 2): 
+            system_eq = io.select_system() 
+            plotter.plot_system(system_eq)
+        if (choice == 3): 
+            break
+
+
             
 
 
