@@ -10,13 +10,25 @@ class IOManager:
         print('3.Exit')
         return self._get_choice(1, 3)
     
-    def select_equation(self):
-        print("Available equaions")
+    def select_equation(self): 
+        print('Available equations') 
         for i, eq in enumerate(EQUATIONS): 
-            print(f'{i}, {eq['description']}')
-        choice = self._get_choice(1, len(METHODS))
-        return METHODS[choice - 1]
+            print(f'{i}. {eq['description']}')
+        choice = self._get_choice(0, len(EQUATIONS) - 1)
+        return EQUATIONS[choice]
     
+    def select_method(self): 
+        print('Available methods')
+        for i, met in enumerate(METHODS):
+            print(f'{i}. {met['name']}')
+        choice = self._get_choice(0, len(METHODS) - 1) 
+        return METHODS[choice]
+
+    
+
+
+
+
     def get_interval(self): 
         print("Set interval [a; b]:")
         a = self._get_float("a = ")

@@ -1,8 +1,12 @@
 class Result: 
-    def __init__(self, root = None, f_value = None, iterations = 0):
+    root: float 
+    f_value: float 
+    iterations: int
+    def __init__(self, root = None, f_value = None, iterations = 0, message = None):
         self.root = root
         self.f_value = f_value
         self.iterations = iterations 
+        self.message = message
     
     def is_valid(self): 
         return self.root is not None 
