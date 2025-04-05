@@ -13,7 +13,7 @@ class Result:
 
     def __str__(self):
         if not self.is_valid(): 
-            return f"oopsie, smth went wrong..."
+            return self.message
         return (
             f"Result:\n"
             f"Root: {self.root}"

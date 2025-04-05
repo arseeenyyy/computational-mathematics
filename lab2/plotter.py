@@ -69,7 +69,7 @@ class Plotter:
         plt.contour(X, Y, f1(X, Y), levels=[0], colors='red', linewidths=2)
         plt.contour(X, Y, f2(X, Y), levels=[0], colors='blue', linewidths=2)
         
-        plt.title(f"System: {system['description']}", pad=20, fontsize=14)
+        plt.title(f"{system['description']}", pad=20, fontsize=14)
         plt.xlabel("x", fontsize=12, color='#4a7b9d')
         plt.ylabel("f(x)", fontsize=12, color='#4a7b9d')
         plt.grid(True, linestyle=':', alpha=0.5)

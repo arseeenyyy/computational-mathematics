@@ -13,7 +13,8 @@ EQUATIONS = [
 
 SYSTEM_EQUATIONS = [
     {
-        "description": "bib", 
+        "description": "[sin(y + 2) - x = 1.5\n"
+                       "[y + cos(x - 2) = 0.5", 
         "system": [
             lambda x, y: np.sin(y + 2) - x - 1.5, 
             lambda x, y: y + np.cos(x - 2) - 0.5

@@ -28,21 +28,21 @@ class IOManager:
     def select_system(self): 
         print('Available systems of nonlinear equations')
         for i, sys_eq in enumerate(SYSTEM_EQUATIONS): 
-            print(f'{i}. {sys_eq['description']}')
+            print(f'{i}.\n{sys_eq['description']}')
         choice = self._get_choice(0, len(SYSTEM_EQUATIONS) - 1) 
         return SYSTEM_EQUATIONS[choice]
 
-    def get_interval(self): 
+    def set_interval(self): 
         print("Set interval [a; b]:")
         a = self._get_float("a = ")
-        b = self._get_float("a = ")
+        b = self._get_float("b = ")
         while b <= a: 
             print("b should be > than a")
             a = self._get_float("a = ") 
             b = self._get_float("b = ")
         return (a, b)
     
-    def get_epsilon(self): 
+    def set_epsilon(self): 
         return self._get_float("Set accuracy(ε): ")
     
     def show_result(self, result: Result): 

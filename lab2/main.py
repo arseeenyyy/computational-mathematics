@@ -12,16 +12,16 @@ def main():
             equation = io.select_equation()
             plotter.plot_equation(equation['func'], equation['description'])
             method = io.select_method()
-            print(method)
+            # func, interval, epsilon
+            interval = io.set_interval()
+            epsilon = io.set_epsilon()
+            result = method['solver'].solve(equation['func'], interval, epsilon)
+            print(result)
         if (choice == 2): 
             system_eq = io.select_system() 
             plotter.plot_system(system_eq)
         if (choice == 3): 
             break
-
-
-            
-
 
 
 if __name__ == "__main__":
