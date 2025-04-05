@@ -1,5 +1,6 @@
 from equations import EQUATIONS
 from methods import METHODS
+from result import Result
 class IOManager: 
 
     def show_menu(self): 
@@ -15,6 +16,7 @@ class IOManager:
             print(f'{i}, {eq['description']}')
         choice = self._get_choice(1, len(METHODS))
         return METHODS[choice - 1]
+    
     def get_interval(self): 
         print("Set interval [a; b]:")
         a = self._get_float("a = ")
@@ -24,8 +26,12 @@ class IOManager:
             a = self._get_float("a = ") 
             b = self._get_float("b = ")
         return (a, b)
-
-
+    
+    def get_epsilon(self): 
+        return self._get_float("Set accuracy(ε): ")
+    
+    def show_result(self, result: Result): 
+        print("\n" + str(result))
 
 
 
