@@ -21,20 +21,19 @@ def main():
                 result = method['solver'].solve(equation['func'], interval, epsilon)
                 print(result)
             if (method == METHODS[1]): 
+                #Newton Method
+                # func, interval, epsilon, 
                 interval = io.set_interval() 
                 epsilon = io.set_epsilon()
                 result = method['solver'].solve(equation['func'], interval, epsilon, equation['f_derivative'], equation['f_double_derivative']) 
-                #Newton Method
-                # func, interval, epsilon, 
                 print(result)
-
             if (method == METHODS[2]): 
                 #Simple iteration Method 
                 # func, interval, epsilon
                 interval = io.set_interval()
                 epsilon = io.set_epsilon()
                 result = method['solver'].solve(equation['func'], interval, epsilon, equation['f_derivative'], equation['f_double_derivative'], equation['func_phi'], equation['phi_derivative'])
-
+                print(result)
         if (choice == 2): 
             system_eq = io.select_system() 
             plotter.plot_system(system_eq)

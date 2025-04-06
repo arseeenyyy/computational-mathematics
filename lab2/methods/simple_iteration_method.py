@@ -14,9 +14,6 @@ class SimpleIterationMethod:
         if first_derivative((a + b) / 2) > 0:
             lbd = - lbd
         print(f'lambda param: {lbd}')
-        print(f'phi\'(a) = {phi_derivative(a, lbd)}')
-        print(f'phi\'(b) = {phi_derivative(b, lbd)}')
-
         for x in np.linspace(a, b, 100, endpoint = True): 
             if (abs(phi_derivative(x, lbd)) >= 1):
                 return Result(
