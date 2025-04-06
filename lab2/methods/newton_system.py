@@ -25,10 +25,10 @@ class NewtonSystemMethod:
             y0 += delta[1]
             solution = np.array([x0, y0])
             print(f'Iteration: {iterations}')
-            print(f'Previous solution: x = {prev_solution[0]:.8f}, y = {prev_solution[1]:.8f}')
-            print(f'Current solution: x = {x0:.8f}, y = {y0:.8f}')
-            print(f'Difference: |Δx| = {abs(x0 - prev_solution[0]):.8f}, |Δy| = {abs(y0 - prev_solution[1]):.8f}')
-            print(f'Function values: f1 = {f_val[0]:.8f}, f2 = {f_val[1]:.8f}')
+            print(f'Previous solution: x = {prev_solution[0]:.5f}, y = {prev_solution[1]:.8f}')
+            print(f'Current solution: x = {x0:.5f}, y = {y0:.5f}')
+            print(f'Difference: |Δx| = {abs(x0 - prev_solution[0]):.5f}, |Δy| = {abs(y0 - prev_solution[1]):.5f}')
+            print(f'Function values: f1 = {f_val[0]:.8f}, f2 = {f_val[1]:.5f}')
             print('='*10)
         
             if (abs(x0 - prev_solution[0]) < epsilon and 

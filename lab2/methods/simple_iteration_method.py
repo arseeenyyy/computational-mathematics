@@ -31,11 +31,12 @@ class SimpleIterationMethod:
         while True: 
             iterations += 1
             x1 = func_phi(prev_x, lbd)
-            print(f'Iteration: {iterations}') 
-            print(f'x_k = {prev_x}')
-            print(f'x_k+1 = {x1}')
-            print(f'f(x_k+1) = {func(x1)}')
-            print(f'|x_k+1 - x_k| = {abs(x1 - prev_x)}')
+            print(f'Iteration: {iterations}')
+            print(f'x_k = {prev_x:.5f}')
+            print(f'x_k+1 = {x1:.5f}')
+            print(f'f(x_k+1) = {func(x1):.5f}')
+            print(f'|x_k+1 - x_k| = {abs(x1 - prev_x):.5f}')
+            print('='*10)
             if (abs(prev_x - x1) < epsilon):
                 break
             prev_x = x1

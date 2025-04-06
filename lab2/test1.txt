@@ -1,0 +1,4 @@
+Result:
+x: -0.18573558377637303
+f(x): 1.3375421938133236e-05
+Number of iterations: 2

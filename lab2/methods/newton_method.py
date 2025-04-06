@@ -32,11 +32,11 @@ class NewtonMethod:
             diff = abs(x - prev_x)
 
             print(f'Iteration: {iterations}')
-            print(f'x_k: {prev_x}') 
-            print(f'f(x_k): {fx}')
-            print(f'df(x_k): {df}')
-            print(f'x_k+1: {x}')
-            print(f'|x_k+1 - x_k|: {diff}')
+            print(f'x_k: {prev_x:.5f}') 
+            print(f'f(x_k): {fx:.5f}')
+            print(f'df(x_k): {df:.5f}')
+            print(f'x_k+1: {x:.5f}')
+            print(f'|x_k+1 - x_k|: {diff:.5f}')
             print('='*10)
             if abs(prev_x - x) < epsilon: 
                 break
