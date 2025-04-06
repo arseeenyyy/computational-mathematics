@@ -29,8 +29,11 @@ def main():
                 print(result)
 
             if (method == METHODS[2]): 
-                #Simple iteration Method, 
-                print("test2")
+                #Simple iteration Method 
+                # func, interval, epsilon
+                interval = io.set_interval()
+                epsilon = io.set_epsilon()
+                result = method['solver'].solve(equation['func'], interval, epsilon, equation['f_derivative'], equation['f_double_derivative'], equation['func_phi'], equation['phi_derivative'])
 
         if (choice == 2): 
             system_eq = io.select_system() 

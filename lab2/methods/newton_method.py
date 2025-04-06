@@ -43,7 +43,7 @@ class NewtonMethod:
             prev_x = x
         return Result(
             root = x, 
-            f_value = func(func(x)),
+            f_value = func(x),
             iterations = iterations
         )
 
