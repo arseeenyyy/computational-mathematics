@@ -3,19 +3,10 @@ import matplotlib.pyplot as plt
 from typing import Callable
 
 class Plotter:
+
     def plot_equation(self, func: Callable, description: str):
-        x_center = 0
-        for attempt in range(3):
-            x = np.linspace(x_center-5, x_center+5, 1000)
-            y = func(x)
-            
-            mask = (np.abs(y) < 20) & (~np.isnan(y))
-            if np.any(mask):
-                x = x[mask]
-                y = y[mask]
-                break
-            x_center += 5
-        
+        x = np.linspace(-15, 15, 1000)
+        y = np.vectorize(func)(x)
         plt.figure(figsize=(10, 6), facecolor='#f8f9fa')
         ax = plt.gca()
         

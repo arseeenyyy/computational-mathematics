@@ -29,7 +29,7 @@ def main():
                 print(result)
 
             if (method == METHODS[2]): 
-                #Simple iteration Method
+                #Simple iteration Method, 
                 print("test2")
 
         if (choice == 2): 
