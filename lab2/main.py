@@ -21,8 +21,11 @@ def main():
                 result = method['solver'].solve(equation['func'], interval, epsilon)
                 print(result)
             if (method == METHODS[1]): 
+                interval = io.set_interval() 
+                epsilon = io.set_epsilon()
+                result = method['solver'].solve() 
                 #Newton Method
-                
+                # func, interval, epsilon, 
                 print("test")
             if (method == METHODS[2]): 
                 #Simple iteration Method
@@ -33,6 +36,7 @@ def main():
             plotter.plot_system(system_eq)
         if (choice == 3): 
             break
+
 
 
 if __name__ == "__main__":
