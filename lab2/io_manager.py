@@ -77,7 +77,7 @@ class IOManager:
             return self.set_interval(), self.set_epsilon()
         
     def read_initial_epsilon(self): 
-        file_path = self._get_file_path()
+        file_path = self.read_filepath()
         try:
             with open(file_path, 'r') as f:
                 lines = [line.strip() for line in f if line.strip()]

@@ -41,7 +41,8 @@ SYSTEM_EQUATIONS = [
         ]
     }, 
     {
-        "description": "boba", 
+        "description": "[x^2 + y^2 = 4\n"
+                       "[y = 3x^2", 
         "system": [
             lambda x, y: x ** 2 + y ** 2 - 4, 
             lambda x, y: y - 3 * x ** 2

@@ -10,6 +10,10 @@ class NewtonSystemMethod:
         
         while True: 
             iterations += 1
+            if iterations >= 100: 
+                return Result(
+                    message= f"Error: method did not converge after {iterations} iterations"
+                )
             f_val = np.array([f1(x0, y0), f2(x0, y0)])
 
             j11, j12 = jacobian[0][0](x0, y0), jacobian[0][1](x0, y0)
@@ -34,6 +38,10 @@ class NewtonSystemMethod:
             if (abs(x0 - prev_solution[0]) < epsilon and 
                 abs(y0 - prev_solution[1]) < epsilon):
                 break
+            if iterations > 20 and (abs(x0 - prev_solution[0]) > 1 or abs(y0 - prev_solution[1]) > 1):
+                return Result(
+                    message= 'Error: method oscillates without convergence'
+                )
         return Result(
             root=solution,
             f_value= np.array(f1(*solution), f2(*solution)), 
