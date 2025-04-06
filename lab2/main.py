@@ -23,10 +23,11 @@ def main():
             if (method == METHODS[1]): 
                 interval = io.set_interval() 
                 epsilon = io.set_epsilon()
-                result = method['solver'].solve() 
+                result = method['solver'].solve(equation['func'], interval, epsilon, equation['f_derivative'], equation['f_double_derivative']) 
                 #Newton Method
                 # func, interval, epsilon, 
-                print("test")
+                print(result)
+
             if (method == METHODS[2]): 
                 #Simple iteration Method
                 print("test2")

@@ -2,12 +2,22 @@ import numpy as np
 
 EQUATIONS = [
     {
-        "description": "x^2 - 2",
-        "func": lambda x: x**2 - 2
+        "description": "x^3 + 4.81x^2 - 17.37x + 5.38",
+        "func": lambda x: x ** 3 + 4.81 * x ** 2 - 17.37 * x + 5.38,
+        "f_derivative": lambda x: 3 * x ** 2 + 9.62 * x - 17.37, 
+        "f_double_derivative": lambda x: 6 * x + 9.62
     }, 
     {
         "description": "sin(x) - 0.5",
-        "func": lambda x: np.sin(x) - 0.5 
+        "func": lambda x: np.sin(x) - 0.5,
+        "f_derivative": lambda x: np.cos(x), 
+        "f_double_derivative": lambda x: - np.sin(x)
+    }, 
+    {
+        "description": "x^3 - 2.18x^2 - 3.27x + 1.43", 
+        "func": lambda x: x ** 3 - 2.18 * x ** 2 - 3.27 * x + 1.43, 
+        "f_derivative": lambda x: 3 * x ** 2 - 4.36 * x - 3.27, 
+        "f_double_derivative": lambda x: 6 * x - 4.36
     }
 ]
 

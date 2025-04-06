@@ -16,7 +16,7 @@ class Result:
             return self.message
         return (
             f"Result:\n"
-            f"Root: {self.root}\n"
-            f"Function value: {self.f_value}\n"
+            f"x: {self.root}\n"
+            f"f(x): {self.f_value}\n"
             f"Number of iterations: {self.iterations}\n"
         )

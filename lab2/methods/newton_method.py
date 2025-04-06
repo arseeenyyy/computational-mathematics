@@ -5,15 +5,7 @@ from result import Result
 
 class NewtonMethod: 
 
-
-    def second_derivative(func): 
-        pass
-    
-    def initial_approx(): 
-        pass
-    
-
-    def solve(self, func, interval, epsilon, max_iter = 100): 
+    def solve(self, func, interval, epsilon, first_derivative, double_derivative): 
         a, b = interval 
         iterations = 0 
         fa, fb = func(a), func(b)
@@ -21,12 +13,21 @@ class NewtonMethod:
             return Result(
                 message = "Error: Function must have opposite signs at interval endpoints"
             )
-        x = a
-        prev_x = x
+        
+        print("calculating initial approx...")
+        prev_x = 0
+        if func(a) * double_derivative(a) > 0: 
+            prev_x = a 
+        elif func(b) * double_derivative(b) > 0: 
+            prev_x = b
+        else: 
+            prev_x = (a + b) / 2
+        x = prev_x
+
         while True: 
             iterations += 1
             fx = func(prev_x)
-            df = derivative(func, prev_x)
+            df = first_derivative(prev_x)
             x = prev_x - fx / df
             diff = abs(x - prev_x)
 
@@ -37,8 +38,9 @@ class NewtonMethod:
             print(f'x_k+1: {x}')
             print(f'|x_k+1 - x_k|: {diff}')
             print('='*10)
-            if (diff) < epsilon: 
+            if abs(prev_x - x) < epsilon: 
                 break
+            prev_x = x
         return Result(
             root = x, 
             f_value = func(func(x)),
