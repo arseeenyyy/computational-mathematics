@@ -42,8 +42,7 @@ class Plotter:
                 Z = func(X, Y)
                 if np.any(np.abs(Z) < 10):  
                     return (-scale, scale)
-            return (-5, 5)  
-        
+            return (-5, 5)          
         range_x = find_reasonable_range(f1)
         range_y = find_reasonable_range(f2)
         view_range = (

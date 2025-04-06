@@ -34,13 +34,21 @@ SYSTEM_EQUATIONS = [
         "system": [
             lambda x, y: np.sin(y + 2) - x - 1.5, 
             lambda x, y: y + np.cos(x - 2) - 0.5
+        ], 
+        "jacobian": [
+            [lambda x, y: -1, lambda x, y: np.cos(y + 2)], 
+            [lambda x, y: -np.sin(x - 2), lambda x, y: 1]
         ]
     }, 
     {
         "description": "boba", 
         "system": [
-            lambda x, y: np.sin(x + y) - 1.2 * x - 0.2, 
-            lambda x, y: x**2 + 2 * y ** 2 - 1
+            lambda x, y: x ** 2 + y ** 2 - 4, 
+            lambda x, y: y - 3 * x ** 2
+        ], 
+        "jacobian": [
+            [lambda x, y: 2 * x, lambda x, y: 2 * y], 
+            [lambda x, y: -6 * x, lambda x, y: 1]
         ]
     }
 ]

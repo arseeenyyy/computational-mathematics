@@ -42,6 +42,12 @@ class IOManager:
             b = self._get_float("b = ")
         return (a, b)
     
+    def set_initial_approx(self): 
+        print('Set initial approx [x_0; y_0]:')
+        x = self._get_float("x = ") 
+        y = self._get_float("y = ")
+        return (x, y)
+
     def set_epsilon(self): 
         return self._get_float("Set accuracy(ε): ")
     
