@@ -15,13 +15,13 @@ class BisectionMethod:
             x = (a + b) / 2
             fx = func(x)
             print(f'Iteration: {iterations}') 
-            print(f'a = {a}') 
-            print(f'b = {b}')
-            print(f'x = {x}')
-            print(f'f(a) = {fa}')
-            print(f'f(b) = {fb}')
-            print(f'f(x) = {fx}')
-            print(f'|a - b| = {abs(a - b)}')
+            print(f'a = {a:.5f}') 
+            print(f'b = {b:.5f}')
+            print(f'x = {x:.5f}')
+            print(f'f(a) = {fa:.5f}')
+            print(f'f(b) = {fb:.5f}')
+            print(f'f(x) = {fx:.5f}')
+            print(f'|a - b| = {abs(a - b):.5f}')
             print('='*10)
             if abs(prev_x - x) < epsilon: 
                 break
