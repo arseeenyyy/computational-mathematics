@@ -1,6 +1,7 @@
 #include "Solver.h"
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 #include <string>
 
 #define INITIAL_N 4
@@ -9,7 +10,6 @@ using namespace std;
 
 double left_rectangle(double (*f)(double), std::pair<double, double> limits, int n) {
     double result = 0;
-    n = 4;
     double h = (limits.second - limits.first) / n;
     for (int i = 0; i < n; i ++) {
         result += f(limits.first + i * h);
@@ -19,7 +19,6 @@ double left_rectangle(double (*f)(double), std::pair<double, double> limits, int
 }
 double right_rectangle(double (*f)(double), std::pair<double, double> limits, int n) {
     double result = 0;
-    n = 4;
     double h = (limits.second - limits.first) / n;
     for (int i = 0 ; i < n + 1; i ++) {
         result += f(limits.first + i * h);
@@ -29,7 +28,6 @@ double right_rectangle(double (*f)(double), std::pair<double, double> limits, in
 }
 double mid_rectangle(double (*f)(double), std::pair<double, double> limits, int n) {
     double result = 0;
-    n = 4;
     double h = (limits.second - limits.first) / n;
     for (int i = 0; i < n; i ++) {
         result += f(limits.first + (i + 0.5) * h);
@@ -59,23 +57,31 @@ double simpson(double (*f)(double), std::pair<double, double> limits, int n) {
     return result;
 }
 
-pair<double, int> compute_integral(double (*f)(double), std::pair<double, double> limits, double accuracy, string method_name) {
-    const IntegrationMethod* method = nullptr; 
-    for (const auto &m : INTEGRATION_METHODS) {
+std::pair<double, int> compute_integral(double (*f)(double), pair<double, double> limits, double accuracy, string method_name) {
+    const IntegrationMethod* method = nullptr;
+    for (const auto& m : INTEGRATION_METHODS) {
         if (m.name == method_name) {
             method = &m;
             break;
         }
     }
     auto coef_it = RUNGE_COEF.find(method_name);
+
+    double coef = coef_it->second;
+
     int n = 4;
-    double result = method -> function(f, limits, n); 
+    double result = method->function(f, limits, n);
     double error = std::numeric_limits<double>::infinity();
+
     while (error > accuracy) {
         n *= 2;
-        double new_result = method -> function(f, limits, n);
-        error = abs(new_result - result) / coef_it->second;
+        double new_result = method->function(f, limits, n);
+        error = std::abs(new_result - result) / coef;
         result = new_result;
+        if (n > 1000000) {
+            cout << "reached splits limit (n > 10^6)";
+            break;
+        }
     }
     return {result, n};
 }

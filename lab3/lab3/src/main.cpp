@@ -1,7 +1,10 @@
 #include <iostream>
+#include <string>
+
 #include "funcs/Functions.h"
 #include "core/Solver.h"
 #include "io/Reader.h"
+
 
 using namespace std;
 
