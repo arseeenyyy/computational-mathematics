@@ -2,8 +2,10 @@
 #define FUNCTIONS_H
 
 #include <cmath>
+#include <cstddef>
 #include <string>
 #include <array>
+#include <vector>
 
 using MathFunction = double(double);
 
@@ -27,5 +29,12 @@ inline std::array<FunctionInfo, 5> AVAILABLE_FUNCTIONS = {{
     {&f4, "-3x³-5x²+4x-2"},
     {&f5, "5"}
 }};
+
+std::vector<double> find_discontinuities(MathFunction* func, double a, double b, size_t n = 1000) {
+    //pass
+
+};
+
+
 
 #endif 

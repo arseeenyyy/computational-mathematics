@@ -3,13 +3,9 @@
 
 #include <iostream>
 
-
-using namespace std;
-
-
 class Reader {
 public: 
-    static void read_params(int &function, pair<double, double> &limits, double &accuracy, double &inital_splits);
+    static void read_params(int &function, std::pair<double, double> &limits, double &accuracy);
 };
 
 #endif
