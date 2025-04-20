@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void Reader :: read_params(int &function, pair<double, double> &limits, double &accuracy, int &integration_method) {
+void read_params(int &function, pair<double, double> &limits, double &accuracy, int &integration_method) {
     cout << "Choose one function:\n";
     for (size_t i = 0; i < AVAILABLE_FUNCTIONS.size(); i ++) {
         cout << i + 1 << ": " << AVAILABLE_FUNCTIONS[i].name << "\n";
@@ -45,6 +45,14 @@ void Reader :: read_params(int &function, pair<double, double> &limits, double &
             cout << "\nChoose correct number of the integration method pls\n";
         }
         integration_method --;
+        break;
+    }
+    while (true) {
+        cout << "Enter accuracy: ";
+        cin >> accuracy;
+        if (accuracy < 0) {
+            cout << "accuracy must be > 0\n";
+        }
         break;
     }
 
