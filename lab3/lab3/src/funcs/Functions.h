@@ -26,15 +26,8 @@ inline std::array<FunctionInfo, 5> AVAILABLE_FUNCTIONS = {{
     {&f1, "x^2"},
     {&f2, "e^x"},
     {&f3, "1/x"},
-    {&f4, "-3x³-5x²+4x-2"},
+    {&f4, "-3x^3-5x^2+4x-2"},
     {&f5, "5"}
 }};
-
-// std::vector<double> find_discontinuities(MathFunction* func, double a, double b, size_t n = 1000) {
-//     //pass
-
-// };
-
-
 
 #endif 

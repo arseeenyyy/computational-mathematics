@@ -78,7 +78,7 @@ std::pair<double, int> compute_integral(double (*f)(double), pair<double, double
         double new_result = method->function(f, limits, n);
         error = std::abs(new_result - result) / coef;
         result = new_result;
-        if (n > 1000000) {
+        if (n > 10000000) {
             cout << "reached splits limit (n > 10^6)";
             break;
         }
