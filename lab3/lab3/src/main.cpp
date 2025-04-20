@@ -1,14 +1,21 @@
-#include <cstddef>
 #include <iostream>
 #include "funcs/Functions.h"
+#include "core/Solver.h"
+#include "io/Reader.h"
 
 using namespace std;
 
 
 int main() {
-    for (size_t i = 0 ; i < AVAILABLE_FUNCTIONS.size() ; i ++) {
-        const auto& func = AVAILABLE_FUNCTIONS[i];
-        cout << func.name << "\n" << AVAILABLE_FUNCTIONS[i].function(1)<<"\n\n";
-    }
+    int function; 
+    pair<double, double> limits;
+    double accuracy;
+    int integration_method;
+    Reader::read_params(function, limits, accuracy, integration_method);
+    cout << "function: " << AVAILABLE_FUNCTIONS[function].name << "\n";
+    cout << "limits: " << limits.first << " " << limits.second << "\n";
+    cout << "accuracy: " << accuracy;
+    cout << "Integration method: " << INTEGRATION_METHODS[integration_method].name;
+
     return 0;
 }

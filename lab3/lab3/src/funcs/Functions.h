@@ -30,10 +30,10 @@ inline std::array<FunctionInfo, 5> AVAILABLE_FUNCTIONS = {{
     {&f5, "5"}
 }};
 
-std::vector<double> find_discontinuities(MathFunction* func, double a, double b, size_t n = 1000) {
-    //pass
+// std::vector<double> find_discontinuities(MathFunction* func, double a, double b, size_t n = 1000) {
+//     //pass
 
-};
+// };
 
 
 
