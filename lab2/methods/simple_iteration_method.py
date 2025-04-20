@@ -9,7 +9,13 @@ class SimpleIterationMethod:
             return Result(
                 message = "Error: Function must have opposite signs at interval endpoints"
             )
+        sign_changes = self.count_roots(func, a, b)
+        if sign_changes > 1: 
+            return Result(
+                message= f"Error: Function must have 1 root on interval [{a}:{b}]\n number of roots: {sign_changes}"
+            )
         max_derivative = max(abs(first_derivative(a)), abs(first_derivative(b)))
+
         lbd = 1 / max_derivative
         if first_derivative((a + b) / 2) > 0:
             lbd = - lbd
@@ -19,7 +25,9 @@ class SimpleIterationMethod:
                 return Result(
                     message = f'Function does not converge on [{a};{b}] at point = {x}'
                 )
-        
+        print(phi_derivative(a, lbd)) 
+        print(phi_derivative(b, lbd))
+        print('='*20)
         prev_x = 0
         if (func(a) * double_derivative(a) > 0): 
             prev_x = a
@@ -45,6 +53,22 @@ class SimpleIterationMethod:
             f_value= func(x1), 
             iterations= iterations
         )
+
+    def count_roots(self, func, a, b, step = 0.1):
+        x_points = np.arange(a, b + step, step)
+        y_values = [func(x) for x in x_points]
+        sign_changes = 0
+        prev_sign = np.sign(y_values[0])
+        for y in y_values[1:]: 
+            current_sign = np.sign(y) 
+            if current_sign == 0: 
+                sign_changes += 1
+                prev_sign = 0
+            elif current_sign != prev_sign and prev_sign != 0: 
+                sign_changes += 1
+                prev_sign = current_sign
+        
+        return sign_changes
 
 
 

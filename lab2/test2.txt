@@ -1,0 +1,4 @@
+Result:
+x: -0.1796875
+f(x): 0.03176445646549675
+Number of iterations: 8
