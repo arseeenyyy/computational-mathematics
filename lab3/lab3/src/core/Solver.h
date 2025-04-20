@@ -6,18 +6,18 @@
 #include <string>
 #include <array>
 
-typedef double (*Integrator)(double (*f)(double),std::pair<double, double> , double accuracy);
+typedef double (*Integrator)(double (*f)(double),std::pair<double, double>, int n);
 
 struct IntegrationMethod {
     Integrator function; 
     std::string name;
 };
 
-double left_rectangle(double (*f)(double), std::pair<double, double> limits,  double accuracy);
-double right_rectangle(double (*f)(double), std::pair<double, double> limits,  double accuracy);
-double mid_rectangle(double (*f)(double), std::pair<double, double> limits,  double accuracy);
-double trapezoidal(double (*f)(double), std::pair<double, double> limits,  double accuracy);
-double simpson(double (*f)(double), std::pair<double, double> limits,  double accuracy);
+double left_rectangle(double (*f)(double), std::pair<double, double> limits, int n);
+double right_rectangle(double (*f)(double), std::pair<double, double> limits, int n);
+double mid_rectangle(double (*f)(double), std::pair<double, double> limits, int n);
+double trapezoidal(double (*f)(double), std::pair<double, double> limits, int n);
+double simpson(double (*f)(double), std::pair<double, double> limits, int n);
 
 inline std::array<IntegrationMethod, 5> INTEGRATION_METHODS = {{
     {&left_rectangle, "left_rectangle"},
