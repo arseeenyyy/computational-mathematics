@@ -1,11 +1,13 @@
 #include "Solver.h"
 #include <cmath>
+#include <cstdlib>
+#include <string>
 
 #define INITIAL_N 4
 
 using namespace std;
 
-double left_rectangle(double (*f)(double), std::pair<double, double> limits, double accuracy, int n) {
+double left_rectangle(double (*f)(double), std::pair<double, double> limits, int n) {
     double result = 0;
     n = 4;
     double h = (limits.second - limits.first) / n;
@@ -55,4 +57,25 @@ double simpson(double (*f)(double), std::pair<double, double> limits, int n) {
     }
     result *= h/3;
     return result;
+}
+
+pair<double, int> compute_integral(double (*f)(double), std::pair<double, double> limits, double accuracy, string method_name) {
+    const IntegrationMethod* method = nullptr; 
+    for (const auto &m : INTEGRATION_METHODS) {
+        if (m.name == method_name) {
+            method = &m;
+            break;
+        }
+    }
+    auto coef_it = RUNGE_COEF.find(method_name);
+    int n = 4;
+    double result = method -> function(f, limits, n); 
+    double error = std::numeric_limits<double>::infinity();
+    while (error > accuracy) {
+        n *= 2;
+        double new_result = method -> function(f, limits, n);
+        error = abs(new_result - result) / coef_it->second;
+        result = new_result;
+    }
+    return {result, n};
 }
