@@ -89,6 +89,12 @@ std::pair<double, int> compute_integral(double (*f)(double), pair<double, double
 bool get_breakpoints(double (*f)(double), std::pair<double, double> limits) {
     int n = 1000;
     double h = (limits.second - limits.first) / n;
+    try {
+        double y = f((limits.first - limits.second) / 2);
+    }  catch (const char* e) {
+            cout << "Exception: " << e << " in point x = " << (limits.second - limits.first) / 2 << "\n";
+            return true;
+    }
     for (int i = 0; i <= n; i++) {
         double x = limits.first + i * h;
         try {
