@@ -5,9 +5,7 @@
 #include "core/Solver.h"
 #include "io/Reader.h"
 
-
 using namespace std;
-
 
 int main() {
     char choice = 'y';
@@ -18,7 +16,9 @@ int main() {
         double accuracy;
         int integration_method;
         
-        read_params(function, limits, accuracy, integration_method);
+        if (!read_params(function, limits, accuracy, integration_method)) {
+            continue;
+        }
         
         pair<double, int> result = compute_integral(
             AVAILABLE_FUNCTIONS[function].function, 

@@ -6,6 +6,7 @@
 #include <string>
 #include <array>
 #include <map>
+#include <vector>
 
 typedef double (*Integrator)(double (*f)(double),std::pair<double, double>, int n);
 
@@ -21,6 +22,9 @@ double trapezoidal(double (*f)(double), std::pair<double, double> limits, int n)
 double simpson(double (*f)(double), std::pair<double, double> limits, int n);
 
 std::pair<double, int> compute_integral(double (*f)(double), std::pair<double, double> limits, double accuracy, std::string method_name);
+
+// std::vector<double> get_breakpoints(double (*f)(double), std::pair<double, double>);
+bool get_breakpoints(double (*f)(double), std::pair<double, double> limits);
 
 inline std::array<IntegrationMethod, 5> INTEGRATION_METHODS = {{
     {&left_rectangle, "left_rectangle"},

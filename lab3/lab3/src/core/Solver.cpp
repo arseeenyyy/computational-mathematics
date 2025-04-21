@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <sys/types.h>
 
 #define INITIAL_N 4
 
@@ -84,4 +85,25 @@ std::pair<double, int> compute_integral(double (*f)(double), pair<double, double
         }
     }
     return {result, n};
+}
+bool get_breakpoints(double (*f)(double), std::pair<double, double> limits) {
+    int n = 1000;
+    double h = (limits.second - limits.first) / n;
+    for (int i = 0; i <= n; i++) {
+        double x = limits.first + i * h;
+        try {
+            double y = f(x);
+            if (std::isinf(y) || std::isnan(y)) {
+                cout << "gap in point: " << x << " (inf or NaN)\n";
+                return true;
+            }
+        } catch (const char* e) {
+            cout << "Exception: " << e << " in point x = " << x << "\n";
+            return true;
+        } catch (...) {
+            cout << "wtf just happend... " << x << "\n";
+            return true;
+        }
+    }
+    return false;
 }

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void read_params(int &function, pair<double, double> &limits, double &accuracy, int &integration_method) {
+bool read_params(int &function, pair<double, double> &limits, double &accuracy, int &integration_method) {
     cout << "Choose one function:\n";
     for (size_t i = 0; i < AVAILABLE_FUNCTIONS.size(); i ++) {
         cout << i + 1 << ": " << AVAILABLE_FUNCTIONS[i].name << "\n";
@@ -34,6 +34,9 @@ void read_params(int &function, pair<double, double> &limits, double &accuracy, 
             break;
         }
     }
+    if (get_breakpoints(AVAILABLE_FUNCTIONS[function].function, limits)) {
+        return false;
+    }
     cout << "Choose integration method:\n";
     for (size_t i = 0; i < INTEGRATION_METHODS.size(); i ++) {
         cout << i + 1 << ": " << INTEGRATION_METHODS[i].name << "\n";
@@ -55,6 +58,7 @@ void read_params(int &function, pair<double, double> &limits, double &accuracy, 
         }
         break;
     }
+    return true;
 
 
 }   
