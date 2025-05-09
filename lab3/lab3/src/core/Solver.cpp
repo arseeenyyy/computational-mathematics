@@ -55,6 +55,7 @@ double simpson(double (*f)(double), std::pair<double, double> limits, int n) {
         result += coef * f(limits.first + i * h);
     }
     result *= h/3;
+    cout << "Current result: " << result << " n: " << n;
     return result;
 }
 
@@ -84,6 +85,7 @@ std::pair<double, int> compute_integral(double (*f)(double), pair<double, double
             break;
         }
     }
+    cout << "Runge rule: " << error;
     return {result, n};
 }
 bool get_breakpoints(double (*f)(double), std::pair<double, double> limits) {
