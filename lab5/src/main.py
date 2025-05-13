@@ -1,5 +1,5 @@
 from math import sin, sqrt
-
+from solve import build_finite_differences_table, print_finite_differences_table
 
 def read_input_from_keyboard(): 
     while True:
@@ -147,7 +147,10 @@ def read_data_from_functions():
 def main(): 
     filename = "test.txt"
     x, xi, yi,  = read_data_from_functions()
-    print(f"x: {x}\nxi: {xi}\nyi: {yi}")
+    print(f"x: {x}\nxi: {xi}\nyi: {yi}")   
+    diff_table = build_finite_differences_table(xi, yi)
+    print_finite_differences_table(xi, diff_table)
+
 
 
 if __name__ == "__main__": 
