@@ -39,3 +39,26 @@ def lagrange_interpolation(xi, yi, x):
         result += yi[i] * l_i
     
     return result
+
+def divided_differences(xi, yi):
+    n = len(xi)
+    coef = yi.copy()
+    
+    for j in range(1, n):
+        for i in range(n-1, j-1, -1):
+            coef[i] = (coef[i] - coef[i-1]) / (xi[i] - xi[i-j])
+    
+    return coef
+
+def newton_divided_difference(xi, yi, x):
+    coef = divided_differences(xi, yi)
+    n = len(xi)
+    result = coef[0]
+    
+    for k in range(1, n):
+        term = coef[k]
+        for j in range(k):
+            term *= (x - xi[j])
+        result += term
+    
+    return result
