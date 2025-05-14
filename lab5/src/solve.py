@@ -1,5 +1,6 @@
 from math import sin, sqrt
 from prettytable import PrettyTable
+from functools import reduce
 
 # разделенные разности для неравномерной сетки
 def calculate_divided_differences(xi, yi):
@@ -87,13 +88,23 @@ def is_uniform_grid(xi, tolerance=1e-6):
             return False
     return True
 
+def lagrange_polynomial(xi, yi, n): 
+    return lambda x: sum([
+        yi[i] * reduce(
+            lambda a, b: a * b,
+                        [(x - xi[j]) / (xi[i] - xi[j])
+            for j in range(n) if i != j])
+        for i in range(n)])
+
 
 def solve(xi, yi, x, n):
     if is_uniform_grid(xi):
         print("\nСетка равномерная")
         finite_diff_table = calculate_finite_differences(yi)
         print_finite_differences(xi, finite_diff_table)
+        print(lagrange_polynomial(xi, yi, n)(x))
     else:
         print("\nСетка неравномерная")
-        divided_diff_table = calculate_divided_differences(xi, yi)
+        # divided_diff_table = calculate_divided_differences(xi, yi)
+        print(lagrange_polynomial(xi, yi, n)(x))
     
