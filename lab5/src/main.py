@@ -1,38 +1,47 @@
 from math import sin, sqrt
-from solve import build_finite_differences_table, print_finite_differences_table
+from solve import solve
 
-def read_input_from_keyboard(): 
-    while True:
-        try:
-            x = float(input("Введите точку интерполяции: "))
-            break
-        except ValueError:
-            print("Ошибка: введите число для точки интерполяции. Попробуйте снова.")
-    
-    xi = []
-    yi = []
-    print("Введите 'quit', чтобы закончить ввод")
-    print("Введите узлы интерполяции (два числа через пробел):")
-    
-    while True: 
-        user_input = input().strip()
-        if user_input.lower() == "quit":
-            break
-            
-        point = user_input.split()
-        if len(point) != 2:
-            print("Неправильный ввод (нужно 2 числа). Такой ввод учитываться не будет. Продолжайте ввод или введите 'quit'")
+def read_input_from_keyboard():
+    while True:  
+        while True:
+            try:
+                x = float(input("Введите точку интерполяции: "))
+                break
+            except ValueError:
+                print("Ошибка: введите число для точки интерполяции. Попробуйте снова.")
+        
+        xi = []
+        yi = []
+        print("Введите 'quit', чтобы закончить ввод")
+        print("Введите узлы интерполяции (два числа через пробел):")
+        
+        while True:
+            user_input = input().strip()
+            if user_input.lower() == "quit":
+                break
+                
+            point = user_input.split()
+            if len(point) != 2:
+                print("Неправильный ввод (нужно 2 числа). Такой ввод учитываться не будет. Продолжайте ввод или введите 'quit'")
+                continue
+                
+            try:
+                x_val = float(point[0])
+                y_val = float(point[1])
+                xi.append(x_val)
+                yi.append(y_val)
+            except ValueError:
+                print("Ошибка: введены не числа. Такой ввод учитываться не будет. Продолжайте ввод или введите 'quit'")
+        
+        if len(xi) < 2:
+            print("Ошибка: нужно ввести как минимум 2 узла интерполяции. Начнем сначала.")
             continue
-            
-        try:
-            x_val = float(point[0])
-            y_val = float(point[1])
-            xi.append(x_val)
-            yi.append(y_val)
-        except ValueError:
-            print("Ошибка: введены не числа. Такой ввод учитываться не будет. Продолжайте ввод или введите 'quit'")
-            
-    return x, xi, yi
+        
+        if x < min(xi) or x > max(xi):
+            print(f"Ошибка: точка интерполяции должна находиться в отрезке [{min(xi)}, {max(xi)}]. Начнем сначала.")
+            continue
+        
+        return x, xi, yi
 
 def read_input_from_file(filename): 
     try: 
@@ -66,7 +75,8 @@ def read_input_from_file(filename):
             
             if not x_read:
                 return None, None, None, "Ошибка: файл не содержит точку интерполяции"
-                
+            if x < min(xi) or x > max(xi): 
+                return None, None, None, f"Точка интерполяции должна лежать в отрезке [{min(xi)}:{max(xi)}]"
             return x, xi, yi, None
     except IOError as error: 
         return None, None, None, f"Невозможно прочитать файл: {error}"
@@ -76,7 +86,6 @@ def read_data_from_example():
     xi = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8]
     yi = [1.5320, 2.5356, 3.5406, 4.5462, 5.5504, 6.5559, 7.5594]
     return x, xi, yi
-from math import sin, sqrt
 
 def read_data_from_functions():
     print("Доступные функции:")
@@ -143,15 +152,60 @@ def read_data_from_functions():
             print("Ошибка: введите число")
 
     return x_interp, xi, yi
+def main():
+    print("'fi' - file\n't' - terminal\n'e' - example\n'f' - function")
+    while True:
+        option = input("Выберите способ задания исходных данных [fi/t/e/f]: ")
+        
+        if option == "fi":
+            while True:
+                filename = input("Введите название файла: ")
+                x, xi, yi, error = read_input_from_file(filename)
+                
+                if error is not None:
+                    print(error)
+                    another_try = input("Вы хотите попробовать еще раз? [y/n]: ")
+                    if another_try.lower() != 'y':
+                        print("Переход к вводу с клавиатуры")
+                        x, xi, yi = read_input_from_keyboard()
+                        break
+                else:
+                    break
+            
+            n = len(xi)
+        
+        elif option == "t":
+            x, xi, yi = read_input_from_keyboard()
+            n = len(xi)
+        
+        elif option == "e":
+            x, xi, yi = read_data_from_example()
+            n = len(xi)
+        
+        elif option == "f":
+            x, xi, yi = read_data_from_functions()
+            n = len(xi)
+        
+        else:
+            print("Некорректный ввод")
+            continue  
+        
+        if len(set(xi)) != len(xi):
+            print("Узлы интерполяции не должны совпадать, повторите ввод")
+            continue
+        
+        if xi != sorted(xi):
+            print("X_i должны быть отсортированы, введите еще раз")
+            continue
+        
+        print("Введенные данные:")
+        print("xi:", xi)
+        print("yi:", yi)
+        print("x:", x)
+        print("n:", n)
+        
+        solve(xi, yi, x, n)
+        break  
 
-def main(): 
-    filename = "test.txt"
-    x, xi, yi,  = read_data_from_functions()
-    print(f"x: {x}\nxi: {xi}\nyi: {yi}")   
-    diff_table = build_finite_differences_table(xi, yi)
-    print_finite_differences_table(xi, diff_table)
-
-
-
-if __name__ == "__main__": 
+if __name__ == "__main__":
     main()
