@@ -1,3 +1,5 @@
+# for matrix calculations 
+
 def calc_det2(matrix): 
     return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
 def solve2(A, B):

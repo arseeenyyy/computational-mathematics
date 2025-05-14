@@ -17,7 +17,7 @@ def linear_approx(xi, yi, n):
         [sx, sxx]
         ], 
         [sy, sxy], 2)
-    return lambda x: a + b * x, a, b
+    return lambda xi: a + b * xi, a, b
 
 def quadratic_approx(xi, yi, n): 
     sx = sum(xi)
@@ -36,7 +36,7 @@ def quadratic_approx(xi, yi, n):
         [sy, sxy, sxxy],
         3
     )
-    return lambda x: a + b * x + c * x ** 2, a, b, c
+    return lambda xi: a + b * xi + c * xi ** 2, a, b, c
 
 def cubic_approximation(xi, yi, n):
     sx = sum(xi)
@@ -84,16 +84,16 @@ def power_approximation(xs, ys, n):
     a = exp(a_)
     b = b_
     return lambda xi: a * xi ** b, a, b
-
+# коэф корреляции Пирсона
 def compute_correlation(x, y, n): 
     av_x = sum(x) / n
     av_y = sum(y) / n
     return sum((x - av_x) * (y - av_y) for x, y in zip(x, y)) / \
         sqrt(sum((x - av_x) ** 2 for x in x) * sum((y - av_y) ** 2 for y in y))
-
+#СКО
 def compute_mse(x, y, fi, n):
     return sqrt(sum(((fi(xi) - yi) ** 2 for xi, yi in zip(x, y))) / n)
-
+#Мера отклонения
 def compute_measure_of_deviation(x, y, fi, n):
     epss = [fi(xi) - yi for xi, yi in zip(x, y)]
     return sum((eps ** 2 for eps in epss))
@@ -147,9 +147,9 @@ def run(functions, x, y, n):
         try:
             fi, *coeffs = approximation(x, y, n)
 
-            s = compute_measure_of_deviation(x, y, fi, n)
-            mse = compute_mean_squared_error(x, y, fi, n)
-            r2 = compute_coefficient_of_determination(x, y, fi, n)
+            s = compute_measure_of_deviation(x, y, fi, n) # отклонение 
+            mse = compute_mse(x, y, fi, n) # mse 
+            r2 = compute_coefficient_of_determination(x, y, fi, n) # R^2
 
             if mse <= best_mse:
                 mses.append((mse, name))
@@ -159,9 +159,9 @@ def run(functions, x, y, n):
             draw_func(fi, name, x)
 
             print(f"{name} функция:")
-            print(f"*  Функция: f(x) =", get_str_content_of_func(fi))
-            print(f"*  Коэффициенты {get_coeffs_str(coeffs)}: {list(map(lambda cf: round(cf, 4), coeffs))}")
-            print(f"*  Среднеквадратичное отклонение: σ = {mse:.5f}")
+            print(f"Функция: f(x) =", get_str_content_of_func(fi))
+            print(f"Коэффициенты {get_coeffs_str(coeffs)}: {list(map(lambda cf: round(cf, 4), coeffs))}")
+            print(f"Среднеквадратичное отклонение: σ = {mse:.5f}")
             if r2 >= 0.95:
                 r2_status = 'высокая точность аппроксимации'
             elif r2 >= 0.75:
@@ -171,10 +171,10 @@ def run(functions, x, y, n):
             else:
                 r2_status = 'точность аппроксимации недостаточна'
 
-            print(f"*  Коэффициент детерминации: R^2 = {r2:.5f}, ({r2_status})")
-            print(f"*  Мера отклонения: S = {s:.5f}")
-            if approximation == linear_approximation:
-                correlation = compute_pearson_correlation(x, y, n)
+            print(f"Коэффициент детерминации: R^2 = {r2:.5f}, ({r2_status})")
+            print(f"Мера отклонения: S = {s:.5f}")
+            if approximation == linear_approx:
+                correlation = compute_correlation(x, y, n)
                 rc = abs(correlation)
                 if rc < 0.05:
                     pir_status = 'связь между переменными отсутствует'
@@ -191,12 +191,12 @@ def run(functions, x, y, n):
                 else:
                     pir_status = 'строгая линейная функциональная зависимость'
 
-                print(f"*  Коэффициент корреляции Пирсона: r = {correlation}, ({pir_status})")
+                print(f"Коэффициент корреляции Пирсона: r = {correlation}, ({pir_status})")
 
         except Exception as e:
             print(f"Ошибка приближения {name} функции: {e}\n")
 
-        print('\n' + ('-' * 30) + '\n')
+        print(('-' * 30) + '\n')
 
     best_funcs = []
     for m, n in mses:
@@ -208,7 +208,7 @@ def run(functions, x, y, n):
     else:
         print(f"Лучшие функции приближения:")
         for n in best_funcs:
-            print(f'*  {n}')
+            print(f'{n}')
 
     draw_plot(x, y)
 
@@ -228,26 +228,34 @@ def read_data_from_file(filename):
     except IOError as err:
         return None, None, "! Невозможно прочитать файл {0}: {1}".format(filename, err)
 
-
 def read_data_from_input():
-    str = ''
     x = []
     y = []
-    while str != 'quit':
-        str = input()
-        point = str.strip().split()
-        if len(point) == 2:
-            x.append(float(point[0]))
-            y.append(float(point[1]))
-        else:
-            if str != 'quit':
-                print("! Неправильный ввод. Введенная точка не будет использована.")
+    while True:
+        user_input = input()
+        if user_input.lower() == 'quit':
+            break
+            
+        point = user_input.strip().split()
+        if len(point) != 2:
+            print("! Неправильный ввод. Введенная точка не будет использована.")
+            continue
+            
+        try:
+            x_val = float(point[0])
+            y_val = float(point[1])
+            x.append(x_val)
+            y.append(y_val)
+        except ValueError:
+            print(f"! Ошибка преобразования чисел в строке '{user_input}'. Введенная точка не будет использована.")
+    
     return x, y
 
-
 def main():
+    print("'f' - file\n't' - terminal\n")
     while True:
-        option = input("Напишите 'f' для ввода из файла, 'e' для задания или 't' для ввода с клавиатуры: ")
+        print("Введите способ задания данных: [f/t]: ")
+        option = input("")
         if option == 'f':
             while True:
                 filename = input("Введите имя файла: ")
@@ -262,28 +270,31 @@ def main():
                         print('Введите \'quit\', чтобы закончить ввод')
                         x, y = read_data_from_input()
                 else:
+                    n = len(x)
+                    if n < 8 or n > 12:
+                        print(f"! Ошибка: количество точек должно быть от 8 до 12. В вашем файле {n} точек.")
+                        continue
                     break
-            n = len(x)
             break
         elif option == 't':
-            print("Введите 'quit', чтобы закончить ввод")
-            x, y = read_data_from_input()
-            n = len(x)
-            break
-        elif option == 'e':
-            h = 0.4
-            x0 = 0
-            n = 11
-            f = lambda xi: 15 * xi / (xi ** 4 + 2)
-
-            x = [round(x0 + i * h, 2) for i in range(n)]
-            y = [round(f(x), 2) for x in x]
+            while True:
+                print("Введите 'quit', чтобы закончить ввод")
+                x, y = read_data_from_input()
+                n = len(x)
+                if n < 8:
+                    print(f"! Ошибка: введено слишком мало точек ({n}). Минимум 8 точек.")
+                    print("Пожалуйста, введите точки снова:")
+                    continue
+                elif n > 12:
+                    print(f"! Ошибка: введено слишком много точек ({n}). Максимум 12 точек.")
+                    print("Пожалуйста, введите точки снова:")
+                    continue
+                else:
+                    break
             break
         else:
             print("! Некорректный ввод. Попробуйте еще раз")
 
-
-    # Функции для исследования
     if all(map(lambda xi: xi > 0, x)):
         if all(map(lambda yi: yi > 0, y)):
             functions = [
@@ -317,13 +328,13 @@ def main():
             ]
 
     with open('out.txt', 'w') as output:
-        option = input("Вывод в файл 'f' или в терминал 't'? [f/t] ")
+        option = input("Вывод в файл или в терминал? [f/t] ")
         if option == 'f':
             print("Выбран вариант вывода в файл 'out.txt'")
             sys.stdout = output
         else:
             print("Выбран вариант вывода в терминал.")
-            print('\n' + ('-' * 30) + '\n')
+            print('\n' + ('-' * 30))
 
         run(functions, x, y, n)
 
