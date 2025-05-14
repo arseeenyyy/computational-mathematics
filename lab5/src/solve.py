@@ -1,20 +1,21 @@
-from math import sin, sqrt
+from math import sin, sqrt, factorial
 from prettytable import PrettyTable
 from functools import reduce
+import numpy as np
 
 # разделенные разности для неравномерной сетки
-def calculate_divided_differences(xi, yi):
-    n = len(xi)
-    table = [[0.0 for _ in range(n)] for _ in range(n)]
+# def calculate_divided_differences(xi, yi):
+#     n = len(xi)
+#     table = [[0.0 for _ in range(n)] for _ in range(n)]
     
-    for i in range(n):
-        table[i][0] = yi[i]
+#     for i in range(n):
+#         table[i][0] = yi[i]
     
-    for j in range(1, n):
-        for i in range(n - j):
-            table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (xi[i+j] - xi[i])
+#     for j in range(1, n):
+#         for i in range(n - j):
+#             table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (xi[i+j] - xi[i])
     
-    return table
+#     return table
 
 # вывод разделенных разностей
 # def print_divided_differences(xi, table):
@@ -96,6 +97,48 @@ def lagrange_polynomial(xi, yi, n):
             for j in range(n) if i != j])
         for i in range(n)])
 
+def calculate_divided_differences(x, y):
+    n = len(y)
+    coef = np.copy(y).astype(float)
+    for j in range(1, n):
+        for i in range(n-1, j-1, -1):
+            coef[i] = (coef[i] - coef[i-1]) / (x[i] - x[i-j])
+    return coef
+
+
+def newton_divided_difference_polynomial(xi, yi, n):
+    coef = calculate_divided_differences(xi, yi)
+    return lambda x: yi[0] + sum([
+        coef[k] * reduce(lambda a, b: a * b, [x - xi[j] for j in range(k)]) for k in range(1, n)
+    ])
+
+def gauss_polynomial(xs, ys, n):
+    n = len(xs) - 1
+    alpha_ind = n // 2
+    fin_difs = []
+    fin_difs.append(ys[:])
+
+    for k in range(1, n + 1):
+        last = fin_difs[-1][:]
+        fin_difs.append(
+            [last[i + 1] - last[i] for i in range(n - k + 1)])
+
+    h = xs[1] - xs[0]
+    dts1 = [0, -1, 1, -2, 2, -3, 3, -4, 4]
+
+    f1 = lambda x: ys[alpha_ind] + sum([
+        reduce(lambda a, b: a * b,
+               [(x - xs[alpha_ind]) / h + dts1[j] for j in range(k)])
+        * fin_difs[k][len(fin_difs[k]) // 2] / factorial(k)
+        for k in range(1, n + 1)])
+
+    f2 = lambda x: ys[alpha_ind] + sum([
+        reduce(lambda a, b: a * b,
+               [(x - xs[alpha_ind]) / h - dts1[j] for j in range(k)])
+        * fin_difs[k][len(fin_difs[k]) // 2 - (1 - len(fin_difs[k]) % 2)] / factorial(k)
+        for k in range(1, n + 1)])
+
+    return lambda x: f1(x) if x > xs[alpha_ind] else f2(x)
 
 def solve(xi, yi, x, n):
     if is_uniform_grid(xi):
@@ -103,8 +146,10 @@ def solve(xi, yi, x, n):
         finite_diff_table = calculate_finite_differences(yi)
         print_finite_differences(xi, finite_diff_table)
         print(lagrange_polynomial(xi, yi, n)(x))
+        print(gauss_polynomial(x, xi, yi))
     else:
         print("\nСетка неравномерная")
         # divided_diff_table = calculate_divided_differences(xi, yi)
         print(lagrange_polynomial(xi, yi, n)(x))
+        print(newton_divided_difference_polynomial(xi, yi, n)(x))
     

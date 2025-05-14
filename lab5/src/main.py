@@ -82,7 +82,7 @@ def read_input_from_file(filename):
         return None, None, None, f"Невозможно прочитать файл: {error}"
 
 def read_data_from_example(): 
-    x = 0.523
+    x = 0.63
     xi = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8]
     yi = [1.5320, 2.5356, 3.5406, 4.5462, 5.5504, 6.5559, 7.5594]
     return x, xi, yi
