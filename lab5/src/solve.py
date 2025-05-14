@@ -2,6 +2,7 @@ from math import sin, sqrt, factorial
 from prettytable import PrettyTable
 from functools import reduce
 import numpy as np
+from matplotlib import pyplot as plt
 
 # разделенные разности для неравномерной сетки
 # def calculate_divided_differences(xi, yi):
@@ -41,6 +42,17 @@ import numpy as np
 #         pt.add_row(row)
     
 #     print(pt)
+
+def draw_plot(a, b, func, name, dx=0.001):
+    xs, ys = [], []
+    a -= dx
+    b += dx
+    x = a
+    while x <= b:
+        xs.append(x)
+        ys.append(func(x))
+        x += dx
+    plt.plot(xs, ys, 'g', label=name)
 
 # конечные разности 
 def calculate_finite_differences(yi):
@@ -113,6 +125,62 @@ def newton_divided_difference_polynomial(xi, yi, n):
     ])
 
 def gauss_polynomial(xs, ys, n):
+    n_nodes = len(xs) - 1
+    alpha_ind = n_nodes // 2
+    fin_difs = []
+    fin_difs.append(ys[:])
+
+    # Вычисляем конечные разности
+    for k in range(1, n_nodes + 1):
+        last = fin_difs[-1][:]
+        fin_difs.append([last[i + 1] - last[i] for i in range(n_nodes - k + 1)])
+
+    h = xs[1] - xs[0]
+    
+    # Увеличиваем список коэффициентов для высоких порядков
+    max_order = n_nodes
+    dts1 = []
+    for i in range(max_order + 1):
+        if i % 2 == 0:
+            dts1.append(-i//2)
+        else:
+            dts1.append((i+1)//2)
+
+    # Первая формула Гаусса (вперед)
+    def f1(x):
+        result = ys[alpha_ind]
+        for k in range(1, min(n_nodes, len(dts1))):
+            # Вычисляем произведение
+            product = 1.0
+            for j in range(k):
+                if j < len(dts1):
+                    product *= (x - xs[alpha_ind]) / h + dts1[j]
+            
+            # Берем центральную разность
+            diff_index = len(fin_difs[k]) // 2
+            if diff_index < len(fin_difs[k]):
+                result += product * fin_difs[k][diff_index] / factorial(k)
+        return result
+
+    # Вторая формула Гаусса (назад)
+    def f2(x):
+        result = ys[alpha_ind]
+        for k in range(1, min(n_nodes, len(dts1))):
+            # Вычисляем произведение
+            product = 1.0
+            for j in range(k):
+                if j < len(dts1):
+                    product *= (x - xs[alpha_ind]) / h - dts1[j]
+            
+            # Берем центральную разность
+            diff_index = len(fin_difs[k]) // 2 - (1 - len(fin_difs[k]) % 2)
+            if 0 <= diff_index < len(fin_difs[k]):
+                result += product * fin_difs[k][diff_index] / factorial(k)
+        return result
+
+    return lambda x: f1(x) if x > xs[alpha_ind] else f2(x)
+
+def stirling_polynomial(xs, ys, n):
     n = len(xs) - 1
     alpha_ind = n // 2
     fin_difs = []
@@ -138,18 +206,106 @@ def gauss_polynomial(xs, ys, n):
         * fin_difs[k][len(fin_difs[k]) // 2 - (1 - len(fin_difs[k]) % 2)] / factorial(k)
         for k in range(1, n + 1)])
 
-    return lambda x: f1(x) if x > xs[alpha_ind] else f2(x)
+    return lambda x: (f1(x) + f2(x)) / 2
+
+
+def bessel_polynomial(xs, ys, n):
+    n = len(xs) - 1
+    alpha_ind = n // 2
+    fin_difs = []
+    fin_difs.append(ys[:])
+
+    for k in range(1, n + 1):
+        last = fin_difs[-1][:]
+        fin_difs.append(
+            [last[i + 1] - last[i] for i in range(n - k + 1)])
+
+    h = xs[1] - xs[0]
+    dts1 = [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
+
+    return lambda x: (ys[alpha_ind] + ys[alpha_ind]) / 2 + sum([
+        reduce(lambda a, b: a * b,
+               [(x - xs[alpha_ind]) / h + dts1[j] for j in range(k)])
+        * fin_difs[k][len(fin_difs[k]) // 2] / factorial(2 * k) +
+
+        ((x - xs[alpha_ind]) / h - 1 / 2) *
+        reduce(lambda a, b: a * b,
+               [(x - xs[alpha_ind]) / h + dts1[j] for j in range(k)])
+        * fin_difs[k][len(fin_difs[k]) // 2] / factorial(2 * k + 1)
+
+        for k in range(1, n + 1)])
+
 
 def solve(xi, yi, x, n):
-    if is_uniform_grid(xi):
+    uniform_grid = is_uniform_grid(xi)
+    
+    if uniform_grid:
         print("\nСетка равномерная")
         finite_diff_table = calculate_finite_differences(yi)
         print_finite_differences(xi, finite_diff_table)
-        print(lagrange_polynomial(xi, yi, n)(x))
-        print(gauss_polynomial(x, xi, yi))
-    else:
+        h = xi[1] - xi[0]  
+        center_index = len(xi) // 2  
+        a = xi[center_index]  
+        t = (x - a) / h  
+        print(f"Нормированный параметр t = {t:.4f}")
+    else: 
         print("\nСетка неравномерная")
-        # divided_diff_table = calculate_divided_differences(xi, yi)
-        print(lagrange_polynomial(xi, yi, n)(x))
-        print(newton_divided_difference_polynomial(xi, yi, n)(x))
+    print('\n' + '-' * 60)
     
+    polynomials = []
+    
+    # Всегда вычисляем полином Лагранжа
+    lagrange = lagrange_polynomial(xi, yi, n)
+    polynomials.append(("Многочлен Лагранжа", lagrange))
+    print("Многочлен Лагранжа:")
+    print(f"P({x}) = {lagrange(x)}")
+    print('-' * 60)
+    
+    if uniform_grid:
+        if len(xi) % 2 == 1:  
+            gauss = gauss_polynomial(xi, yi, n)
+            polynomials.append(("Многочлен Гаусса", gauss))
+            print("Многочлен Гаусса:")
+            print(f"P({x}) = {gauss(x)}")
+            print('-' * 60)
+            print(f"Многочлен Бесселя не применяется: количество точек нечетное {n}")
+            print('-' * 60)
+            if abs(t) <= 0.25:
+                stirling = stirling_polynomial(xi, yi, n)
+                polynomials.append(("Многочлен Стирлинга", stirling))
+                print("Многочлен Стирлинга (|t| <= 0.25):")
+                print(f"P({x}) = {stirling(x)}")
+                print('-' * 60)
+            else:
+                print("Многочлен Стирлинга не применяется (|t| > 0.25)")
+                print('-' * 60)
+                
+        else:  
+            if 0.25 <= abs(t) <= 0.75:
+                bessel = bessel_polynomial(xi, yi, n)
+                polynomials.append(("Многочлен Бесселя", bessel))
+                print("Многочлен Бесселя (0.25 <= |t| <= 0.75):")
+                print(f"P({x}) = {bessel(x)}")
+                print('-' * 60)
+            else:
+                print("Многочлен Бесселя не применяется (|t| < 0.25 или |t| > 0.75)")
+                print('-' * 60)
+    else:
+        newton_divided = newton_divided_difference_polynomial(xi, yi, n)
+        polynomials.append(("Многочлен Ньютона (раздел. разн.)", newton_divided))
+        print("Многочлен Ньютона с разделенными разностями:")
+        print(f"P({x}) = {newton_divided(x)}")
+        print('-' * 60)
+    
+    for name, P in polynomials:
+        plt.figure(figsize=(10, 6))
+        draw_plot(xi[0], xi[-1], P, name)
+        plt.title(f"Интерполяция ({name})")
+        plt.xlabel("X")
+        plt.ylabel("Y")
+        plt.scatter(x, P(x), c='r', label=f"P({x}) = {P(x):.6f}")
+        for i in range(len(xi)):
+            plt.scatter(xi[i], yi[i], c='b')
+        plt.legend()
+        plt.grid(True)
+        plt.show()

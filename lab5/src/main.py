@@ -92,17 +92,16 @@ def read_data_from_functions():
     print("1. x^2 - 5x")
     print("2. x^5")
     print("3. sin(x)")
-    print("4. sqrt(x)")
 
     while True:
         try:
-            func_number = int(input("Выберите функцию [1/2/3/4]: "))
-            if func_number not in [1, 2, 3, 4]:
-                print("Ошибка: введите число от 1 до 4")
+            func_number = int(input("Выберите функцию [1/2/3]: "))
+            if func_number not in [1, 2, 3]:
+                print("Ошибка: введите число от 1 до 3")
                 continue
             break
         except ValueError:
-            print("Ошибка: введите целое число (1, 2, 3 или 4)")
+            print("Ошибка: введите целое число (1, 2, 3)")
 
     if func_number == 1:
         f = lambda x: x ** 2 - 5 * x
@@ -110,8 +109,7 @@ def read_data_from_functions():
         f = lambda x: x ** 5
     elif func_number == 3:
         f = lambda x: sin(x)
-    elif func_number == 4:
-        f = lambda x: sqrt(x)
+
 
     while True:
         try:

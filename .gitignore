@@ -2,3 +2,4 @@ obj/
 bin/
 __pycache__
 build/
+.venv
