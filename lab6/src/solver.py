@@ -1,6 +1,6 @@
 import numpy as np
 
-def euler_method(f, xi, y0): 
+def euler_method(f, xi, y0, eps): 
     yi = [y0]
     h = xi[1] - xi[0] 
     for i in range(len(xi)):
@@ -8,7 +8,7 @@ def euler_method(f, xi, y0):
         yi.append(y_next)
     return yi
 
-def improved_euler_method(f, xi, y0):
+def improved_euler_method(f, xi, y0, eps):
     yi = [y0]
     h = xi[1] - xi[0]
     for i in range(len(xi)):
@@ -18,15 +18,28 @@ def improved_euler_method(f, xi, y0):
     return yi
 
 
+def milne_method(f, xi, y0, eps):
+    n = len(xi)
+    h = xi[1] - xi[0]
+    y = [y0]
+    for i in range(1, 4):
+        k1 = h * f(xi[i - 1], y[i - 1])
+        k2 = h * f(xi[i - 1] + h / 2, y[i - 1] + k1 / 2)
+        k3 = h * f(xi[i - 1] + h / 2, y[i - 1] + k2 / 2)
+        k4 = h * f(xi[i - 1] + h, y[i - 1] + k3)
+        y.append(y[i - 1] + (k1 + 2 * k2 + 2 * k3 + k4) / 6)
 
-def main(): 
-    f = lambda x, y: x + y
-    xi = np.arange(0, 1.0, 0.1).tolist()
-    y0 = 1
-    yi = euler_method(f, xi, y0);
-    print(yi)
-    yi = improved_euler_method(f, xi, y0)
-    print(yi)
+    for i in range(4, n):
+        yp = y[i - 4] + 4 * h * (2 * f(xi[i - 3], y[i - 3]) - f(xi[i - 2], y[i - 2]) + 2 * f(xi[i - 1], y[i - 1])) / 3
 
-if __name__ == "__main__": 
-    main()
+        y_next = yp
+        while True:
+            yc = y[i - 2] + h * (f(xi[i - 2], y[i - 2]) + 4 * f(xi[i - 1], y[i - 1]) + f(xi[i], y_next)) / 3
+            if abs(yc - y_next) < eps:
+                y_next = yc
+                break
+            y_next = yc
+
+        y.append(y_next)
+
+    return y
