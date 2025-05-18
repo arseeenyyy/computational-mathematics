@@ -127,87 +127,77 @@ def newton_divided_difference_polynomial(xi, yi, n):
 def gauss_polynomial(xs, ys, n):
     n_nodes = len(xs) - 1
     alpha_ind = n_nodes // 2
-    fin_difs = []
-    fin_difs.append(ys[:])
-
-    # Вычисляем конечные разности
+    fin_difs = [ys[:]]
+    
     for k in range(1, n_nodes + 1):
         last = fin_difs[-1][:]
         fin_difs.append([last[i + 1] - last[i] for i in range(n_nodes - k + 1)])
-
+    
     h = xs[1] - xs[0]
     
-    # Увеличиваем список коэффициентов для высоких порядков
-    max_order = n_nodes
-    dts1 = []
-    for i in range(max_order + 1):
-        if i % 2 == 0:
-            dts1.append(-i//2)
-        else:
-            dts1.append((i+1)//2)
-
-    # Первая формула Гаусса (вперед)
+    dts1 = [0] + [(-1)**i * (i // 2 + 1) for i in range(1, n_nodes)]
+    
     def f1(x):
         result = ys[alpha_ind]
-        for k in range(1, min(n_nodes, len(dts1))):
-            # Вычисляем произведение
+        t = (x - xs[alpha_ind]) / h
+        for k in range(1, n_nodes + 1):
             product = 1.0
             for j in range(k):
-                if j < len(dts1):
-                    product *= (x - xs[alpha_ind]) / h + dts1[j]
-            
-            # Берем центральную разность
+                product *= t + dts1[j]
             diff_index = len(fin_difs[k]) // 2
-            if diff_index < len(fin_difs[k]):
-                result += product * fin_difs[k][diff_index] / factorial(k)
+            result += product * fin_difs[k][diff_index] / factorial(k)
         return result
-
-    # Вторая формула Гаусса (назад)
+    
     def f2(x):
         result = ys[alpha_ind]
-        for k in range(1, min(n_nodes, len(dts1))):
-            # Вычисляем произведение
+        t = (x - xs[alpha_ind]) / h
+        for k in range(1, n_nodes + 1):
             product = 1.0
             for j in range(k):
-                if j < len(dts1):
-                    product *= (x - xs[alpha_ind]) / h - dts1[j]
-            
-            # Берем центральную разность
-            diff_index = len(fin_difs[k]) // 2 - (1 - len(fin_difs[k]) % 2)
+                product *= t - dts1[j]
+            diff_index = len(fin_difs[k]) // 2 - (1 if k % 2 == 1 else 0)
             if 0 <= diff_index < len(fin_difs[k]):
                 result += product * fin_difs[k][diff_index] / factorial(k)
         return result
-
+    
     return lambda x: f1(x) if x > xs[alpha_ind] else f2(x)
 
 def stirling_polynomial(xs, ys, n):
     n = len(xs) - 1
     alpha_ind = n // 2
-    fin_difs = []
-    fin_difs.append(ys[:])
-
+    fin_difs = [ys[:]]
+    
     for k in range(1, n + 1):
         last = fin_difs[-1][:]
-        fin_difs.append(
-            [last[i + 1] - last[i] for i in range(n - k + 1)])
-
+        fin_difs.append([last[i + 1] - last[i] for i in range(n - k + 1)])
+    
     h = xs[1] - xs[0]
-    dts1 = [0, -1, 1, -2, 2, -3, 3, -4, 4]
-
-    f1 = lambda x: ys[alpha_ind] + sum([
-        reduce(lambda a, b: a * b,
-               [(x - xs[alpha_ind]) / h + dts1[j] for j in range(k)])
-        * fin_difs[k][len(fin_difs[k]) // 2] / factorial(k)
-        for k in range(1, n + 1)])
-
-    f2 = lambda x: ys[alpha_ind] + sum([
-        reduce(lambda a, b: a * b,
-               [(x - xs[alpha_ind]) / h - dts1[j] for j in range(k)])
-        * fin_difs[k][len(fin_difs[k]) // 2 - (1 - len(fin_difs[k]) % 2)] / factorial(k)
-        for k in range(1, n + 1)])
-
+    dts1 = [0] + [(-1)**i * (i // 2 + 1) for i in range(1, n + 1)]
+    
+    def f1(x):
+        result = ys[alpha_ind]
+        t = (x - xs[alpha_ind]) / h
+        for k in range(1, n + 1):
+            product = 1.0
+            for j in range(k):
+                product *= t + dts1[j]
+            diff_index = len(fin_difs[k]) // 2
+            result += product * fin_difs[k][diff_index] / factorial(k)
+        return result
+    
+    def f2(x):
+        result = ys[alpha_ind]
+        t = (x - xs[alpha_ind]) / h
+        for k in range(1, n + 1):
+            product = 1.0
+            for j in range(k):
+                product *= t - dts1[j]
+            diff_index = len(fin_difs[k]) // 2 - (1 if k % 2 == 1 else 0)
+            if 0 <= diff_index < len(fin_difs[k]):
+                result += product * fin_difs[k][diff_index] / factorial(k)
+        return result
+    
     return lambda x: (f1(x) + f2(x)) / 2
-
 
 def bessel_polynomial(xs, ys, n):
     n = len(xs) - 1
@@ -254,7 +244,6 @@ def solve(xi, yi, x, n):
     
     polynomials = []
     
-    # Всегда вычисляем полином Лагранжа
     lagrange = lagrange_polynomial(xi, yi, n)
     polynomials.append(("Многочлен Лагранжа", lagrange))
     print("Многочлен Лагранжа:")
@@ -279,7 +268,7 @@ def solve(xi, yi, x, n):
             else:
                 print("Многочлен Стирлинга не применяется (|t| > 0.25)")
                 print('-' * 60)
-                
+                    
         else:  
             if 0.25 <= abs(t) <= 0.75:
                 bessel = bessel_polynomial(xi, yi, n)
@@ -303,9 +292,9 @@ def solve(xi, yi, x, n):
         plt.title(f"Интерполяция ({name})")
         plt.xlabel("X")
         plt.ylabel("Y")
-        plt.scatter(x, P(x), c='r', label=f"P({x}) = {P(x):.6f}")
         for i in range(len(xi)):
             plt.scatter(xi[i], yi[i], c='b')
+        plt.scatter(x, P(x), c='r', label=f"P({x}) = {P(x):.6f}")
         plt.legend()
         plt.grid(True)
         plt.show()

@@ -97,7 +97,7 @@ def compute_mse(x, y, fi, n):
 def compute_measure_of_deviation(x, y, fi, n):
     epss = [fi(xi) - yi for xi, yi in zip(x, y)]
     return sum((eps ** 2 for eps in epss))
-
+# коэф детерминации
 def compute_coefficient_of_determination(xs, ys, fi, n):
     av_fi = sum(fi(x) for x in xs) / n
     return 1 - sum((y - fi(x)) ** 2 for x, y in zip(xs, ys)) / sum((y - av_fi) ** 2 for y in ys)
@@ -254,8 +254,7 @@ def read_data_from_input():
 def main():
     print("'f' - file\n't' - terminal\n")
     while True:
-        print("Введите способ задания данных: [f/t]: ")
-        option = input("")
+        option = input("Введите способ задания данных: [f/t]: ")
         if option == 'f':
             while True:
                 filename = input("Введите имя файла: ")
@@ -330,10 +329,8 @@ def main():
     with open('out.txt', 'w') as output:
         option = input("Вывод в файл или в терминал? [f/t] ")
         if option == 'f':
-            print("Выбран вариант вывода в файл 'out.txt'")
             sys.stdout = output
         else:
-            print("Выбран вариант вывода в терминал.")
             print('\n' + ('-' * 30))
 
         run(functions, x, y, n)
