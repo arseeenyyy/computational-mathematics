@@ -10,11 +10,9 @@ def select_odu():
     print('1. y + (1 + x)*y^2')
     print('2. x + y')
     print('3. sin(x) - y')
-    print('4. y / x')
-    print('5. e^x\n')
     while True: 
         try: 
-            option = int(input("Выберите ОДУ [1/2/3/4/5]: "))
+            option = int(input("Выберите ОДУ [1/2/3]: "))
             if option == 1: 
                 f = lambda x, y: y + (1 + x) * y ** 2
                 exact_y = lambda x, x0, y0: -exp(x) / (x*exp(x) - (x0*exp(x0)*y0 + exp(x0)) / y0)
@@ -27,14 +25,14 @@ def select_odu():
                 f = lambda x, y: sin(x) - y
                 exact_y = lambda x, x0, y0: (2*exp(x0)* y0-exp(x0)*sin(x0)+exp(x0)*cos(x0)) / (2*exp(x)) + (sin(x)) / 2 - (cos(x)) / 2
                 break
-            elif option == 4: 
-                f = lambda x, y: y / x
-                exact_y = lambda x, x0, y0: (x*y0) / x0
-                break
-            elif option == 5: 
-                f = lambda x, y: exp(x)
-                exact_y = lambda x, x0, y0: y0 - exp(x0) + exp(x)
-                break
+            # elif option == 4: 
+            #     f = lambda x, y: y / x
+            #     exact_y = lambda x, x0, y0: (x*y0) / x0
+            #     break
+            # elif option == 5: 
+            #     f = lambda x, y: exp(x)
+            #     exact_y = lambda x, x0, y0: y0 - exp(x0) + exp(x)
+            #     break
             else: 
                 print("Некорректный ввод, попробуйте еще раз\n") 
         except ValueError: 
@@ -99,7 +97,7 @@ def solve(f, x0, xn, n, y0, exact_y, eps):
             plt.title(name)
             
             draw_plot(xi[0], xi[-1], exact_y, x0, y0)
-            plt.plot([], [], 'b-', label='Точное решение', color='blue')  
+            plt.plot([], [], 'b-', label='Точное решение')  
             
             for i in range(len(xi)):
                 plt.scatter(xi[i], yi[i], c='red', label='Численное решение' if i == 0 else "")  
