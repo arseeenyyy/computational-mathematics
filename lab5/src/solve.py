@@ -101,13 +101,18 @@ def is_uniform_grid(xi, tolerance=1e-6):
             return False
     return True
 
-def lagrange_polynomial(xi, yi, n): 
-    return lambda x: sum([
-        yi[i] * reduce(
-            lambda a, b: a * b,
-                        [(x - xi[j]) / (xi[i] - xi[j])
-            for j in range(n) if i != j])
-        for i in range(n)])
+def lagrange_polynomial(xi, yi, n):
+    def L(x):
+        total = 0.0
+        n = len(xi)
+        for i in range(n):
+            l_i = 1.0
+            for j in range(n):
+                if j != i:
+                    l_i *= (x - xi[j]) / (xi[i] - xi[j])
+            total += yi[i] * l_i
+        return total
+    return L
 
 def calculate_divided_differences(x, y):
     n = len(y)
@@ -120,9 +125,18 @@ def calculate_divided_differences(x, y):
 
 def newton_divided_difference_polynomial(xi, yi, n):
     coef = calculate_divided_differences(xi, yi)
-    return lambda x: yi[0] + sum([
-        coef[k] * reduce(lambda a, b: a * b, [x - xi[j] for j in range(k)]) for k in range(1, n)
-    ])
+    
+    def poly(x):
+        result = yi[0]  
+        product = 1.0
+        
+        for k in range(1, len(xi)):
+            product *= (x - xi[k-1])  
+            result += coef[k] * product
+            
+        return result
+    
+    return poly
 
 def gauss_polynomial(xs, ys, n):
     n_nodes = len(xs) - 1
@@ -202,28 +216,31 @@ def stirling_polynomial(xs, ys, n):
 def bessel_polynomial(xs, ys, n):
     n = len(xs) - 1
     alpha_ind = n // 2
-    fin_difs = []
-    fin_difs.append(ys[:])
-
-    for k in range(1, n + 1):
-        last = fin_difs[-1][:]
-        fin_difs.append(
-            [last[i + 1] - last[i] for i in range(n - k + 1)])
-
     h = xs[1] - xs[0]
-    dts1 = [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
-
-    return lambda x: (ys[alpha_ind] + ys[alpha_ind]) / 2 + sum([
-        reduce(lambda a, b: a * b,
-               [(x - xs[alpha_ind]) / h + dts1[j] for j in range(k)])
-        * fin_difs[k][len(fin_difs[k]) // 2] / factorial(2 * k) +
-
-        ((x - xs[alpha_ind]) / h - 1 / 2) *
-        reduce(lambda a, b: a * b,
-               [(x - xs[alpha_ind]) / h + dts1[j] for j in range(k)])
-        * fin_difs[k][len(fin_difs[k]) // 2] / factorial(2 * k + 1)
-
-        for k in range(1, n + 1)])
+    
+    fin_difs = [ys.copy()]
+    for k in range(1, n + 1):
+        fin_difs.append([fin_difs[k-1][i+1] - fin_difs[k-1][i] for i in range(n - k + 1)])
+    
+    def interpolate(x):
+        t = (x - xs[alpha_ind]) / h
+        result = (ys[alpha_ind] + ys[alpha_ind + 1]) / 2
+        
+        for k in range(1, min(n, len(fin_difs))):
+            product = 1.0
+            for j in range(k):
+                m = (j + 1) // 2
+                sign = -1 if j % 2 else 1
+                product *= (t + sign * m)
+            
+            if k % 2 == 0:
+                result += product * fin_difs[k][len(fin_difs[k])//2] / factorial(k)
+            else:
+                result += (t - 0.5) * product * fin_difs[k][len(fin_difs[k])//2] / factorial(k)
+                
+        return result
+    
+    return interpolate
 
 
 def solve(xi, yi, x, n):
