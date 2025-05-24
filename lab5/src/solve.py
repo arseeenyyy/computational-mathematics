@@ -5,43 +5,55 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 # разделенные разности для неравномерной сетки
-# def calculate_divided_differences(xi, yi):
-#     n = len(xi)
-#     table = [[0.0 for _ in range(n)] for _ in range(n)]
+def calculate_divided_differences(xi, yi):
+    n = len(xi)
+    table = [[0.0 for _ in range(n)] for _ in range(n)]
     
-#     for i in range(n):
-#         table[i][0] = yi[i]
+    for i in range(n):
+        table[i][0] = yi[i]
     
-#     for j in range(1, n):
-#         for i in range(n - j):
-#             table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (xi[i+j] - xi[i])
-    
-#     return table
+    for j in range(1, n):
+        for i in range(n - j):
+            table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (xi[i+j] - xi[i])
+    return table
+
+def full_divided_differences_table(xi, yi):
+    n = len(xi)
+    table = [[0.0 for _ in range(n)] for _ in range(n)]
+    for i in range(n):
+        table[i][0] = yi[i]  
+    for j in range(1, n):
+        for i in range(n):
+            if i + j < n:
+                table[i][j] = (table[i+1][j-1] - table[i][j-1]) / (xi[i+j] - xi[i])
+            else:
+                table[i][j] = 0.0  
+    return table
 
 # вывод разделенных разностей
-# def print_divided_differences(xi, table):
-#     print("\nТаблица разделенных разностей (неравномерная сетка):")
-#     pt = PrettyTable()
+def print_divided_differences(xi, table):
+    print("\nТаблица разделённых разностей (неравномерная сетка):")
+    pt = PrettyTable()
     
-#     max_columns = len(xi)
+    n = len(xi)
+    headers = ["x_i", "f[x_i]"] + [f"f[x_i..x_i+{j}]" for j in range(1, n)]
+    pt.field_names = headers
     
-#     headers = ["x_i", "y_i"]
-#     for i in range(1, max_columns-1):
-#         headers.append(f"{i}-я разн.")
-#     pt.field_names = headers
-    
-#     for i in range(len(xi)):
-#         row = [f"{xi[i]:.4f}", f"{table[i][0]:.6f}"]
+    for i in range(n):
+        row = [f"{xi[i]:.6f}", f"{table[i][0]:.6f}"]  # x_i и f[x_i]
         
-#         for j in range(1, min(len(xi)-i, max_columns-1)):
-#             row.append(f"{table[i][j]:.6f}")
+        for j in range(1, n - i):
+            row.append(f"{table[i][j]:.6f}")
         
-#         while len(row) < len(headers):
-#             row.append("")
-            
-#         pt.add_row(row)
+        # Заполняем оставшиеся ячейки пустыми строками
+        row += [""] * (len(headers) - len(row))
+        
+        pt.add_row(row)
     
-#     print(pt)
+    # Настройки форматирования
+    pt.align = "r"
+    pt.float_format = ".6"
+    print(pt)
 
 def draw_plot(a, b, func, name, dx=0.001):
     xs, ys = [], []
@@ -125,7 +137,7 @@ def calculate_divided_differences(x, y):
 
 def newton_divided_difference_polynomial(xi, yi, n):
     coef = calculate_divided_differences(xi, yi)
-    
+    print(coef)    
     def poly(x):
         result = yi[0]  
         product = 1.0
@@ -148,24 +160,24 @@ def gauss_polynomial(xs, ys, n):
         fin_difs.append([last[i + 1] - last[i] for i in range(n_nodes - k + 1)])
     
     h = xs[1] - xs[0]
-    
     dts1 = [0] + [(-1)**i * (i // 2 + 1) for i in range(1, n_nodes)]
     
     def f1(x):
         result = ys[alpha_ind]
         t = (x - xs[alpha_ind]) / h
-        for k in range(1, n_nodes + 1):
+        for k in range(1, n_nodes):
             product = 1.0
             for j in range(k):
                 product *= t + dts1[j]
             diff_index = len(fin_difs[k]) // 2
+            print(fin_difs[k][diff_index])
             result += product * fin_difs[k][diff_index] / factorial(k)
         return result
     
     def f2(x):
         result = ys[alpha_ind]
         t = (x - xs[alpha_ind]) / h
-        for k in range(1, n_nodes + 1):
+        for k in range(1, n_nodes):
             product = 1.0
             for j in range(k):
                 product *= t - dts1[j]
@@ -177,7 +189,6 @@ def gauss_polynomial(xs, ys, n):
     return lambda x: f1(x) if x > xs[alpha_ind] else f2(x)
 
 def stirling_polynomial(xs, ys, n):
-    n = len(xs) - 1
     alpha_ind = n // 2
     fin_difs = [ys[:]]
     
@@ -257,6 +268,8 @@ def solve(xi, yi, x, n):
         print(f"Нормированный параметр t = {t:.4f}")
     else: 
         print("\nСетка неравномерная")
+        table = full_divided_differences_table(xi, yi)
+        print_divided_differences(xi, table)
     print('\n' + '-' * 60)
     
     polynomials = []
@@ -264,16 +277,16 @@ def solve(xi, yi, x, n):
     lagrange = lagrange_polynomial(xi, yi, n)
     polynomials.append(("Многочлен Лагранжа", lagrange))
     print("Многочлен Лагранжа:")
-    print(f"P({x}) = {lagrange(x)}")
+    print(f"P({x}) = {lagrange(x):.6f}")
     print('-' * 60)
     
     if uniform_grid:
+        gauss = gauss_polynomial(xi, yi, n) 
+        polynomials.append(("Многочлен Гаусса", gauss))
+        print("Многочлен Гаусса:")
+        print(f"P({x}) = {gauss(x)}")
+        print('-' * 60)
         if len(xi) % 2 == 1:  
-            gauss = gauss_polynomial(xi, yi, n)
-            polynomials.append(("Многочлен Гаусса", gauss))
-            print("Многочлен Гаусса:")
-            print(f"P({x}) = {gauss(x)}")
-            print('-' * 60)
             print(f"Многочлен Бесселя не применяется: количество точек нечетное {n}")
             print('-' * 60)
             if abs(t) <= 0.25:

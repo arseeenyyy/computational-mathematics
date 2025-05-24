@@ -1,4 +1,5 @@
 # https://mathdf.com/dif/ru/# - точные решения для построения графика
+# значение щага с которым дошли до необходимой погрешности
 from math import sin, cos, exp, inf
 import matplotlib.pyplot as plt
 from solver import euler_method, improved_euler_method, milne_method

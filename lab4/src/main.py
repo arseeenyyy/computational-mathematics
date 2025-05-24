@@ -61,6 +61,68 @@ def cubic_approximation(xi, yi, n):
     )
     return lambda xi: a + b * xi + c * xi ** 2 + d * xi ** 3, a, b, c, d
 
+def quartic_approximation(xi, yi, n):
+    sx = sum(xi)
+    sxx = sum(x ** 2 for x in xi)
+    sxxx = sum(x ** 3 for x in xi)
+    sxxxx = sum(x ** 4 for x in xi)
+    sxxxxx = sum(x ** 5 for x in xi)
+    sxxxxxx = sum(x ** 6 for x in xi)
+    sxxxxxxx = sum(x ** 7 for x in xi)
+    sxxxxxxxx = sum(x ** 8 for x in xi)
+    
+    sy = sum(yi)
+    sxy = sum(x * y for x, y in zip(xi, yi))
+    sxxy = sum(x * x * y for x, y in zip(xi, yi))
+    sxxxy = sum(x * x * x * y for x, y in zip(xi, yi))
+    sxxxxy = sum(x * x * x * x * y for x, y in zip(xi, yi))
+    a, b, c, d, e = solve_sle(
+        [
+            [n,    sx,   sxx,   sxxx,   sxxxx],
+            [sx,   sxx,  sxxx,  sxxxx,  sxxxxx],
+            [sxx,  sxxx, sxxxx, sxxxxx, sxxxxxx],
+            [sxxx, sxxxx, sxxxxx, sxxxxxx, sxxxxxxx],
+            [sxxxx, sxxxxx, sxxxxxx, sxxxxxxx, sxxxxxxxx]
+        ],
+        [sy, sxy, sxxy, sxxxy, sxxxxy],
+        5
+    )    
+    return lambda x: a + b * x + c * x ** 2 + d * x ** 3 + e * x ** 4, a, b, c, d, e
+
+def quintic_approximation(xi, yi, n):
+    sx = sum(xi)
+    sxx = sum(x ** 2 for x in xi)
+    sxxx = sum(x ** 3 for x in xi)
+    sxxxx = sum(x ** 4 for x in xi)
+    sxxxxx = sum(x ** 5 for x in xi)
+    sxxxxxx = sum(x ** 6 for x in xi)
+    sxxxxxxx = sum(x ** 7 for x in xi)
+    sxxxxxxxx = sum(x ** 8 for x in xi)
+    sxxxxxxxxx = sum(x ** 9 for x in xi)
+    sxxxxxxxxxx = sum(x ** 10 for x in xi)
+    
+    sy = sum(yi)
+    sxy = sum(x * y for x, y in zip(xi, yi))
+    sxxy = sum(x * x * y for x, y in zip(xi, yi))
+    sxxxy = sum(x * x * x * y for x, y in zip(xi, yi))
+    sxxxxy = sum(x * x * x * x * y for x, y in zip(xi, yi))
+    sxxxxxy = sum(x * x * x * x * x * y for x, y in zip(xi, yi))
+    
+    a, b, c, d, e, f = solve_sle(
+        [
+            [n,      sx,     sxx,    sxxx,    sxxxx,    sxxxxx],
+            [sx,     sxx,    sxxx,   sxxxx,   sxxxxx,   sxxxxxx],
+            [sxx,    sxxx,   sxxxx,  sxxxxx,  sxxxxxx,  sxxxxxxx],
+            [sxxx,   sxxxx,  sxxxxx, sxxxxxx, sxxxxxxx, sxxxxxxxx],
+            [sxxxx,  sxxxxx, sxxxxxx, sxxxxxxx, sxxxxxxxx, sxxxxxxxxx],
+            [sxxxxx, sxxxxxx, sxxxxxxx, sxxxxxxxx, sxxxxxxxxx, sxxxxxxxxxx]
+        ],
+        [sy, sxy, sxxy, sxxxy, sxxxxy, sxxxxxy],
+        6
+    )
+    
+    return lambda x: a + b * x + c * x ** 2 + d * x ** 3 + e * x ** 4 + f * x ** 5, a, b, c, d, e, f
+
 def exponential_approximation(xs, ys, n):
     ys_ = list(map(log, ys))
     _, a_, b_ = linear_approx(xs, ys_, n)
@@ -76,7 +138,6 @@ def logarithmic_approximation(xs, ys, n):
     b = b_
     return lambda xi: a + b * log(xi), a, b
 
-
 def power_approximation(xs, ys, n):
     xs_ = list(map(log, xs))
     ys_ = list(map(log, ys))
@@ -84,20 +145,20 @@ def power_approximation(xs, ys, n):
     a = exp(a_)
     b = b_
     return lambda xi: a * xi ** b, a, b
-# коэф корреляции Пирсона
+# коэф корреляции Пирсона - наличие/отсутствие линейной связи связи между переменнымип
 def compute_correlation(x, y, n): 
     av_x = sum(x) / n
     av_y = sum(y) / n
     return sum((x - av_x) * (y - av_y) for x, y in zip(x, y)) / \
         sqrt(sum((x - av_x) ** 2 for x in x) * sum((y - av_y) ** 2 for y in y))
-#СКО
+#СКО - выбор наилучшего уравнения
 def compute_mse(x, y, fi, n):
     return sqrt(sum(((fi(xi) - yi) ** 2 for xi, yi in zip(x, y))) / n)
-#Мера отклонения
+#Мера отклонения 
 def compute_measure_of_deviation(x, y, fi, n):
     epss = [fi(xi) - yi for xi, yi in zip(x, y)]
     return sum((eps ** 2 for eps in epss))
-# коэф детерминации
+# коэф детерминации - достоверность аппроксимации
 def compute_coefficient_of_determination(xs, ys, fi, n):
     av_fi = sum(fi(x) for x in xs) / n
     return 1 - sum((y - fi(x)) ** 2 for x, y in zip(xs, ys)) / sum((y - av_fi) ** 2 for y in ys)
@@ -134,7 +195,10 @@ def get_coeffs_str(coeffs):
         return '(a, b, c)'
     if len(coeffs) == 4:
         return '(a, b, c, d)'
-    return '(a, b, c, d, e)'
+    if len(coeffs) == 5: 
+        return "(a, b, c, d, e)"
+    if len(coeffs) == 6: 
+        return "(a, b, c, d, e, f)"
 
 
 def run(functions, x, y, n):
@@ -162,41 +226,41 @@ def run(functions, x, y, n):
             print(f"Функция: f(x) =", get_str_content_of_func(fi))
             print(f"Коэффициенты {get_coeffs_str(coeffs)}: {list(map(lambda cf: round(cf, 4), coeffs))}")
             print(f"Среднеквадратичное отклонение: σ = {mse:.5f}")
-            if r2 >= 0.95:
-                r2_status = 'высокая точность аппроксимации'
-            elif r2 >= 0.75:
-                r2_status = 'удовлетворительная точность аппроксимации'
-            elif r2 >= 0.5:
-                r2_status = 'слабая точность аппроксимации'
-            else:
-                r2_status = 'точность аппроксимации недостаточна'
+            # if r2 >= 0.95:
+            #     r2_status = 'высокая точность аппроксимации'
+            # elif r2 >= 0.75:
+            #     r2_status = 'удовлетворительная точность аппроксимации'
+            # elif r2 >= 0.5:
+            #     r2_status = 'слабая точность аппроксимации'
+            # else:
+            #     r2_status = 'точность аппроксимации недостаточна'
 
-            print(f"Коэффициент детерминации: R^2 = {r2:.5f}, ({r2_status})")
+            print(f"Коэффициент детерминации: R^2 = {r2:.5f}")
             print(f"Мера отклонения: S = {s:.5f}")
             if approximation == linear_approx:
                 correlation = compute_correlation(x, y, n)
-                rc = abs(correlation)
-                if rc < 0.05:
-                    pir_status = 'связь между переменными отсутствует'
-                elif rc < 0.3:
-                    pir_status = 'связь слабая'
-                elif rc < 0.5:
-                    pir_status = 'связь умеренная'
-                elif rc < 0.7:
-                    pir_status = 'связь заметная'
-                elif rc < 0.9:
-                    pir_status = 'связь высокая'
-                elif rc <= 0.99:
-                    pir_status = 'связь весьма высокая'
-                else:
-                    pir_status = 'строгая линейная функциональная зависимость'
+                # rc = abs(correlation)
+                # if rc < 0.05:
+                #     pir_status = 'связь между переменными отсутствует'
+                # elif rc < 0.3:
+                #     pir_status = 'связь слабая'
+                # elif rc < 0.5:
+                #     pir_status = 'связь умеренная'
+                # elif rc < 0.7:
+                #     pir_status = 'связь заметная'
+                # elif rc < 0.9:
+                #     pir_status = 'связь высокая'
+                # elif rc <= 0.99:
+                #     pir_status = 'связь весьма высокая'
+                # else:
+                #     pir_status = 'строгая линейная функциональная зависимость'
 
-                print(f"Коэффициент корреляции Пирсона: r = {correlation}, ({pir_status})")
+                print(f"Коэффициент корреляции Пирсона: r = {correlation}")
 
         except Exception as e:
             print(f"Ошибка приближения {name} функции: {e}\n")
 
-        print(('-' * 30) + '\n')
+        print(('-' * 30))
 
     best_funcs = []
     for m, n in mses:
@@ -302,14 +366,19 @@ def main():
                 (cubic_approximation,        "Полиноминальная 3-й степени"),
                 (exponential_approximation,  "Экспоненциальная"),
                 (logarithmic_approximation,  "Логарифмическая"),
-                (power_approximation,        "Степенная")
+                (power_approximation,        "Степенная"), 
+                (quartic_approximation, "Полиноминальная 4-й степени"), 
+                (quintic_approximation, "Полиноминальная 5-й степени")
             ]
         else:
             functions = [
                 (linear_approx,              "Линейная"),
                 (quadratic_approx,           "Полиноминальная 2-й степени"),
                 (cubic_approximation,        "Полиноминальная 3-й степени"),
+                (quartic_approximation, "Полиноминальная 4-й степени") ,
                 (logarithmic_approximation,  "Логарифмическая"),
+                (quintic_approximation, "Полиноминальная 5-й степени")
+
             ]
     else:
         if all(map(lambda yi: yi > 0, y)):
@@ -317,13 +386,18 @@ def main():
                 (linear_approx,              "Линейная"),
                 (quadratic_approx,           "Полиноминальная 2-й степени"),
                 (cubic_approximation,        "Полиноминальная 3-й степени"),
+                (quartic_approximation, "Полиноминальная 4-й степени") ,
                 (exponential_approximation,  "Экспоненциальная"),
+                (quintic_approximation, "Полиноминальная 5-й степени")
+
             ]
         else:
             functions = [
                 (linear_approx,              "Линейная"),
                 (quadratic_approx,           "Полиноминальная 2-й степени"),
                 (cubic_approximation,        "Полиноминальная 3-й степени"),
+                (quartic_approximation, "Полиноминальная 4-й степени"), 
+                (quintic_approximation, "Полиноминальная 5-й степени")
             ]
 
     with open('out.txt', 'w') as output:
