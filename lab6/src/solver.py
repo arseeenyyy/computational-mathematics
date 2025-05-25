@@ -48,8 +48,6 @@ def milne_method(f, xi, y0, eps):
 
     return y
 
-
-
 def runge_rule(y_prev, y_curr, p):
     return abs(y_curr - y_prev) / (2 ** p - 1)
 

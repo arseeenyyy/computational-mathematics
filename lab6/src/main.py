@@ -158,7 +158,6 @@ def solve(f, x0, xn, n, y0, exact_y, eps):
             plt.show()
         except OverflowError:
             print('-' * 30 + '\n')
-
 def main(): 
     f, exact_y = select_odu()
     y0, x0, xn, h, eps = get_input_params()
@@ -166,5 +165,6 @@ def main():
     print("-"*60)
     n = int((xn - x0) / h)
     solve(f, x0, xn, n, y0, exact_y, eps)
+
 if __name__ == "__main__": 
     main()
