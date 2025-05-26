@@ -1,5 +1,4 @@
 # https://mathdf.com/dif/ru/# - точные решения для построения графика
-# значение щага с которым дошли до необходимой погрешности
 from math import sin, cos, exp, inf
 import matplotlib.pyplot as plt
 from solver import euler_method, fourth_order_runge_kutta_method, milne_method, exact_accuracy, runge_rule
@@ -90,6 +89,23 @@ def print_initial_data(y0, x0, xn, h, eps):
     table.add_row([y0, x0, xn, h, eps])
     print(table)
 
+def print_result_table(xs, ys, exact_y, x0, y0):
+    table = PrettyTable()
+    table.field_names = ["x_i", "y_i(numerical)", "y_i(exact)"]
+    for i in range(len(xs)): 
+        table.add_row([round(xs[i], 4), round(ys[i], 4), round(exact_y(xs[i], x0, y0), 4)])
+    print(table)
+
+def draw(name, xs, ys, exact_y, x0, y0): 
+    plt.title(name)
+    draw_plot(xs[0], xs[-1], exact_y, x0, y0)
+    for i in range(len(xs)):
+        plt.scatter(xs[i], ys[i], c='r')
+
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.show()
+
 def solve(f, x0, xn, n, y0, exact_y, eps):
     print()
     methods = [("Euler method", euler_method),
@@ -99,7 +115,6 @@ def solve(f, x0, xn, n, y0, exact_y, eps):
     for name, method in methods:
         ni = n
         print(name)
-
         try:
             iters = 0
 
@@ -129,35 +144,16 @@ def solve(f, x0, xn, n, y0, exact_y, eps):
                 print(f"epsilon: {eps}\ninterval was splitted in {ni} parts\nh: {round((xn - x0) / ni, 6)}\niterations: {iters}")
             else:
                 print(f"epsilon: {eps}\ninterval was splitted in {ni} parts\nh: {round((xn - x0) / ni, 6)}")
-            table = PrettyTable()
-            exact_table = PrettyTable()
-            table.field_names = ["x_i", "y_i"]
-            for i in range(len(xs)): 
-                table.add_row([xs[i], ys[i]])
-            print(table)
-            exact_table.field_names = ["x_i", "y_i"]
-            for i in range(len(xs)): 
-                exact_table.add_row([xs[i], exact_y(xs[i], x0, y0)])
-            print(exact_table)
-
-            print()
+            print_result_table(xs, ys, exact_y, x0, y0)
             if method is milne_method:
                 print(f"Accuracy (max|y_i_exac - y_i|): {inaccuracy}\n")
-                print("-" * 30)
             else:
                 print(f"Accuracy (Runge rule): {inaccuracy}\n")
-                print("-" * 30)
-
-            plt.title(name)
-            draw_plot(xs[0], xs[-1], exact_y, x0, y0)
-            for i in range(len(xs)):
-                plt.scatter(xs[i], ys[i], c='r')
-
-            plt.xlabel("X")
-            plt.ylabel("Y")
-            plt.show()
+            print("-" * 30)
+            draw(name, xs, ys, exact_y, x0, y0)
         except OverflowError:
             print('-' * 30 + '\n')
+
 def main(): 
     f, exact_y = select_odu()
     y0, x0, xn, h, eps = get_input_params()
